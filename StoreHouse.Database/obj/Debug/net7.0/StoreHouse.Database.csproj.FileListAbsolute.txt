@@ -1,0 +1,14 @@
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\bin\Debug\net7.0\StoreHouse.Database.deps.json
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\bin\Debug\net7.0\StoreHouse.Database.runtimeconfig.json
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\bin\Debug\net7.0\StoreHouse.Database.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\bin\Debug\net7.0\StoreHouse.Database.pdb
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.csproj.AssemblyReference.cache
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.AssemblyInfoInputs.cache
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.AssemblyInfo.cs
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.csproj.CoreCompileInputs.cache
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\refint\StoreHouse.Database.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.pdb
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.genruntimeconfig.cache
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\ref\StoreHouse.Database.dll
