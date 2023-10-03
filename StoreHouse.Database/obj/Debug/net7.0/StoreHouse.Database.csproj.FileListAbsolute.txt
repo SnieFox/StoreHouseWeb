@@ -12,3 +12,17 @@ C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\
 C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.pdb
 C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.genruntimeconfig.cache
 C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\ref\StoreHouse.Database.dll
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\bin\Debug\net7.0\StoreHouse.Database.deps.json
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\bin\Debug\net7.0\StoreHouse.Database.runtimeconfig.json
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\bin\Debug\net7.0\StoreHouse.Database.dll
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\bin\Debug\net7.0\StoreHouse.Database.pdb
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.csproj.AssemblyReference.cache
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.AssemblyInfoInputs.cache
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.AssemblyInfo.cs
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.csproj.CoreCompileInputs.cache
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.dll
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\refint\StoreHouse.Database.dll
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.pdb
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\StoreHouse.Database.genruntimeconfig.cache
+C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Database\obj\Debug\net7.0\ref\StoreHouse.Database.dll

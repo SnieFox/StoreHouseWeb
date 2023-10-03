@@ -32,58 +32,156 @@ public class StoreHouseContext : DbContext
         //Relations Configuring
 
         //Ingredient-Category
-        modelBuilder.Entity<Ingredient>()
-            .HasOne(c => c.Category)
-            .WithMany(i => i.Ingredients)
-            .HasForeignKey(c => c.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Ingredient>(entity =>
+        {
+            entity.ToTable("Ingredient");
+
+            entity.HasKey(e => e.Id);
+            
+            entity.HasOne(c => c.Category)
+                .WithMany(i => i.Ingredients)
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.Name);
+            entity.Property(e => e.PrimeCost);
+            entity.Property(e => e.Remains);
+            entity.Property(e => e.Unit);
+        });
+            
+        
         //Product-Category
-        modelBuilder.Entity<Product>()
-            .HasOne(c => c.Category)
-            .WithMany(p => p.Products)
-            .HasForeignKey(c => c.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
-        //WriteOff-Cause
-        modelBuilder.Entity<WriteOff>()
-            .HasOne(c => c.Cause)
-            .WithMany(p => p.WriteOffs)
-            .HasForeignKey(c => c.CauseId);
-        //WriteOff-User
-        modelBuilder.Entity<WriteOff>()
-            .HasOne(u => u.User)
-            .WithMany(w => w.WriteOffs)
-            .HasForeignKey(u => u.UserId);
-        //User-Role
-        modelBuilder.Entity<User>()
-            .HasOne(r => r.Role)
-            .WithMany(u => u.Users)
-            .HasForeignKey(r => r.RoleId);
-        //Receipt-Client
-        modelBuilder.Entity<Receipt>()
-            .HasOne(c => c.Client)
-            .WithMany(r => r.Receipts)
-            .HasForeignKey(c => c.ClientId);
-        //Receipt-User
-        modelBuilder.Entity<Receipt>()
-            .HasOne(u => u.User)
-            .WithMany(r => r.Receipts)
-            .HasForeignKey(u => u.UserId);
-        //Dish-Category
-        modelBuilder.Entity<Dish>()
-            .HasOne(c => c.Category)
-            .WithMany(p => p.Dishes)
-            .HasForeignKey(c => c.CategoryId)
-            .OnDelete(DeleteBehavior.Cascade);
-        //Supply-Supplier
-        modelBuilder.Entity<Supply>()
-            .HasOne(s => s.Supplier)
-            .WithMany(p => p.Supplies)
-            .HasForeignKey(s => s.SupplierId);
-        //Supply-User
-        modelBuilder.Entity<Supply>()
-            .HasOne(s => s.User)
-            .WithMany(p => p.Supplies)
-            .HasForeignKey(s => s.UserId);
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.ToTable("Product");
+
+            entity.HasKey(e => e.Id);
+            
+            entity.HasOne(c => c.Category)
+                .WithMany(p => p.Products)
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.Name);
+            entity.Property(e => e.PrimeCost);
+            entity.Property(e => e.Price);
+            entity.Property(e => e.ImageId);
+        });
+        
+        //WriteOff
+        modelBuilder.Entity<WriteOff>(entity =>
+        {
+            entity.ToTable("WriteOff");
+
+            entity.HasKey(e => e.Id);
+            
+            //WriteOff-User
+            entity.HasOne(u => u.User)
+                .WithMany(w => w.WriteOffs)
+                .HasForeignKey(u => u.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            
+            //WriteOff-Cause
+            entity.HasOne(c => c.Cause)
+                .WithMany(p => p.WriteOffs)
+                .HasForeignKey(c => c.CauseId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.Property(e => e.Comment);
+            entity.Property(e => e.Date);
+            entity.Property(e => e.UserName);
+        });
+            
+        
+        //User
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("User");
+
+            entity.HasKey(e => e.Id);
+            
+            //User-Role
+            entity.HasOne(r => r.Role)
+                .WithMany(u => u.Users)
+                .HasForeignKey(r => r.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.Property(e => e.Email);
+            entity.Property(e => e.FullName);
+            entity.Property(e => e.HashedLogin);
+            entity.Property(e => e.HashedPassword);
+            entity.Property(e => e.PinCode);
+            entity.Property(e => e.LastLoginDate);
+        });
+            
+        
+        //Receipt
+        modelBuilder.Entity<Receipt>(entity =>
+        {
+            entity.ToTable("Receipt");
+
+            entity.HasKey(e => e.Id);
+            
+            //Receipt-User
+            entity.HasOne(u => u.User)
+                .WithMany(r => r.Receipts)
+                .HasForeignKey(u => u.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            
+            //Receipt-Client
+            entity.HasOne(c => c.Client)
+                .WithMany(r => r.Receipts)
+                .HasForeignKey(c => c.ClientId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            entity.Property(e => e.Type);
+            entity.Property(e => e.ClientName);
+            entity.Property(e => e.CloseDate);
+            entity.Property(e => e.OpenDate);
+            entity.Property(e => e.UserName);
+        });
+            
+        //Dish
+        modelBuilder.Entity<Dish>(entity =>
+        {
+            entity.ToTable("Dish");
+
+            entity.HasKey(e => e.Id);
+
+            //Dish-Category
+            entity.HasOne(c => c.Category)
+                .WithMany(p => p.Dishes)
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.Name);
+            entity.Property(e => e.Price);
+        });
+        
+        //Supply
+        modelBuilder.Entity<Supply>(entity =>
+        {
+            entity.ToTable("Supply");
+
+            entity.HasKey(e => e.Id);
+            
+            //Supply-User
+            entity.HasOne(s => s.User)
+                .WithMany(p => p.Supplies)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            //Supply-Supplier
+            entity.HasOne(s => s.Supplier)
+                .WithMany(p => p.Supplies)
+                .HasForeignKey(s => s.SupplierId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            
+            entity.Property(e => e.UserName);
+            entity.Property(e => e.Date);
+            entity.Property(e => e.Sum);
+            entity.Property(e => e.Comment);
+        });
 
         modelBuilder.Entity<ProductList>(entity =>
         {
