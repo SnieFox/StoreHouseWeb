@@ -30,6 +30,7 @@ public class StoreHouseContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //Relations Configuring
+
         //Ingredient-Category
         modelBuilder.Entity<Ingredient>()
             .HasOne(c => c.Category)
@@ -83,35 +84,48 @@ public class StoreHouseContext : DbContext
             .HasOne(s => s.User)
             .WithMany(p => p.Supplies)
             .HasForeignKey(s => s.UserId);
-        //ProductList-Dish
-        modelBuilder.Entity<ProductList>()
-            .HasOne(c => c.Dish)
-            .WithMany(p => p.ProductLists)
-            .HasForeignKey(c => c.DishId)
-            .OnDelete(DeleteBehavior.Cascade);
-        //ProductList-SemiProduct
-        modelBuilder.Entity<ProductList>()
-            .HasOne(c => c.SemiProduct)
-            .WithMany(p => p.ProductLists)
-            .HasForeignKey(c => c.SemiProductId)
-            .OnDelete(DeleteBehavior.Cascade);
-        //ProductList-WriteOff
-        modelBuilder.Entity<ProductList>()
-            .HasOne(c => c.WriteOff)
-            .WithMany(p => p.ProductLists)
-            .HasForeignKey(c => c.WriteOffId)
-            .OnDelete(DeleteBehavior.Cascade);
-        //ProductList-Supply
-        modelBuilder.Entity<ProductList>()
-            .HasOne(c => c.Supply)
-            .WithMany(p => p.ProductLists)
-            .HasForeignKey(c => c.SupplyId)
-            .OnDelete(DeleteBehavior.NoAction);
-        //ProductList-Receipt
-        modelBuilder.Entity<ProductList>()
-            .HasOne(c => c.Receipt)
-            .WithMany(p => p.ProductLists)
-            .HasForeignKey(c => c.ReceiptId)
-            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProductList>(entity =>
+        {
+            entity.ToTable("ProductList");
+
+            entity.HasKey(e => e.Id);
+
+            //ProductList-Dish
+            entity.HasOne(c => c.Dish)
+                .WithMany(p => p.ProductLists)
+                .HasForeignKey(c => c.DishId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //ProductList-SemiProduct
+            entity.HasOne(c => c.SemiProduct)
+                .WithMany(p => p.ProductLists)
+                .HasForeignKey(c => c.SemiProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //ProductList-WriteOff
+            entity.HasOne(c => c.WriteOff)
+                .WithMany(p => p.ProductLists)
+                .HasForeignKey(c => c.WriteOffId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            //ProductList-Supply
+            entity.HasOne(c => c.Supply)
+                .WithMany(p => p.ProductLists)
+                .HasForeignKey(c => c.SupplyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //ProductList-Receipt
+            entity.HasOne(c => c.Receipt)
+                .WithMany(p => p.ProductLists)
+                .HasForeignKey(c => c.ReceiptId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.Name);
+            entity.Property(e => e.Count);
+            entity.Property(e => e.Sum);
+            entity.Property(e => e.PrimeCost);
+            entity.Property(e => e.Comment);
+        });
     }
 }

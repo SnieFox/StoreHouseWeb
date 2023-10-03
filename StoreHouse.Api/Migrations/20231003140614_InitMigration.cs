@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace StoreHouse.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class CascadeProductList : Migration
+    public partial class InitMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,14 +16,14 @@ namespace StoreHouse.Api.Migrations
                 name: "Clients",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Sex = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BankCard = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MobilePhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FullName = table.Column<string>(type: "text", nullable: false),
+                    BirthDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Sex = table.Column<string>(type: "text", nullable: false),
+                    BankCard = table.Column<string>(type: "text", nullable: false),
+                    MobilePhone = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,10 +34,10 @@ namespace StoreHouse.Api.Migrations
                 name: "DishesCategories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    ImageId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,10 +48,10 @@ namespace StoreHouse.Api.Migrations
                 name: "IngredientsCategories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    ImageId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -61,10 +62,10 @@ namespace StoreHouse.Api.Migrations
                 name: "ProductCategories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    ImageId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -75,9 +76,9 @@ namespace StoreHouse.Api.Migrations
                 name: "Roles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,12 +89,12 @@ namespace StoreHouse.Api.Migrations
                 name: "SemiProducts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Output = table.Column<double>(type: "float", nullable: false),
-                    PrimeCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Prescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Output = table.Column<double>(type: "double precision", nullable: false),
+                    PrimeCost = table.Column<decimal>(type: "numeric", nullable: false),
+                    Prescription = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,11 +105,11 @@ namespace StoreHouse.Api.Migrations
                 name: "Suppliers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MobilePhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    MobilePhone = table.Column<string>(type: "text", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -119,9 +120,9 @@ namespace StoreHouse.Api.Migrations
                 name: "WriteOffCauses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -132,11 +133,11 @@ namespace StoreHouse.Api.Migrations
                 name: "Dishes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CategoryId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -153,13 +154,13 @@ namespace StoreHouse.Api.Migrations
                 name: "Ingredients",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PrimeCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Remains = table.Column<double>(type: "float", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CategoryId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Unit = table.Column<string>(type: "text", nullable: false),
+                    PrimeCost = table.Column<decimal>(type: "numeric", nullable: false),
+                    Remains = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -176,13 +177,13 @@ namespace StoreHouse.Api.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PrimeCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CategoryId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    ImageId = table.Column<string>(type: "text", nullable: true),
+                    PrimeCost = table.Column<decimal>(type: "numeric", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -199,15 +200,15 @@ namespace StoreHouse.Api.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HashedLogin = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HashedPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastLoginDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PinCode = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: false),
+                    HashedLogin = table.Column<string>(type: "text", nullable: false),
+                    HashedPassword = table.Column<string>(type: "text", nullable: false),
+                    LastLoginDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PinCode = table.Column<int>(type: "integer", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -224,15 +225,15 @@ namespace StoreHouse.Api.Migrations
                 name: "Receipts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    ClientName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OpenDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CloseDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    ClientName = table.Column<string>(type: "text", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    OpenDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CloseDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -255,14 +256,14 @@ namespace StoreHouse.Api.Migrations
                 name: "Supplies",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SupplierId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Sum = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    SupplierId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Sum = table.Column<decimal>(type: "numeric", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -285,13 +286,13 @@ namespace StoreHouse.Api.Migrations
                 name: "WriteOffs",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CauseId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CauseId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -311,50 +312,51 @@ namespace StoreHouse.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductLists",
+                name: "ProductList",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DishId = table.Column<int>(type: "int", nullable: false),
-                    SemiProductId = table.Column<int>(type: "int", nullable: false),
-                    WriteOffId = table.Column<int>(type: "int", nullable: false),
-                    SupplyId = table.Column<int>(type: "int", nullable: false),
-                    ReceiptId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Count = table.Column<double>(type: "float", nullable: false),
-                    Sum = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PrimeCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DishId = table.Column<int>(type: "integer", nullable: false),
+                    SemiProductId = table.Column<int>(type: "integer", nullable: false),
+                    WriteOffId = table.Column<int>(type: "integer", nullable: false),
+                    SupplyId = table.Column<int>(type: "integer", nullable: false),
+                    ReceiptId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Count = table.Column<double>(type: "double precision", nullable: false),
+                    Sum = table.Column<decimal>(type: "numeric", nullable: false),
+                    PrimeCost = table.Column<decimal>(type: "numeric", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductLists", x => x.Id);
+                    table.PrimaryKey("PK_ProductList", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductLists_Dishes_DishId",
+                        name: "FK_ProductList_Dishes_DishId",
                         column: x => x.DishId,
                         principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductLists_Receipts_ReceiptId",
+                        name: "FK_ProductList_Receipts_ReceiptId",
                         column: x => x.ReceiptId,
                         principalTable: "Receipts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductLists_SemiProducts_SemiProductId",
+                        name: "FK_ProductList_SemiProducts_SemiProductId",
                         column: x => x.SemiProductId,
                         principalTable: "SemiProducts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductLists_Supplies_SupplyId",
+                        name: "FK_ProductList_Supplies_SupplyId",
                         column: x => x.SupplyId,
                         principalTable: "Supplies",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductLists_WriteOffs_WriteOffId",
+                        name: "FK_ProductList_WriteOffs_WriteOffId",
                         column: x => x.WriteOffId,
                         principalTable: "WriteOffs",
                         principalColumn: "Id",
@@ -372,28 +374,28 @@ namespace StoreHouse.Api.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductLists_DishId",
-                table: "ProductLists",
+                name: "IX_ProductList_DishId",
+                table: "ProductList",
                 column: "DishId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductLists_ReceiptId",
-                table: "ProductLists",
+                name: "IX_ProductList_ReceiptId",
+                table: "ProductList",
                 column: "ReceiptId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductLists_SemiProductId",
-                table: "ProductLists",
+                name: "IX_ProductList_SemiProductId",
+                table: "ProductList",
                 column: "SemiProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductLists_SupplyId",
-                table: "ProductLists",
+                name: "IX_ProductList_SupplyId",
+                table: "ProductList",
                 column: "SupplyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProductLists_WriteOffId",
-                table: "ProductLists",
+                name: "IX_ProductList_WriteOffId",
+                table: "ProductList",
                 column: "WriteOffId");
 
             migrationBuilder.CreateIndex(
@@ -444,7 +446,7 @@ namespace StoreHouse.Api.Migrations
                 name: "Ingredients");
 
             migrationBuilder.DropTable(
-                name: "ProductLists");
+                name: "ProductList");
 
             migrationBuilder.DropTable(
                 name: "Products");

@@ -21,7 +21,7 @@ public static class DbServiceCollectionsExtensions
         }
         
         services.AddDbContext<StoreHouseContext>(db =>
-            db.UseSqlServer(connectionString,
+            db.UseNpgsql(connectionString,
                 b=> b.MigrationsAssembly("StoreHouse.Api")));
 
         services.AddScoped<IClientService, ClientService>();
