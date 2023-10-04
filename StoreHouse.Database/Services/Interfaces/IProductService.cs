@@ -9,8 +9,8 @@ namespace StoreHouse.Database.Services.Interfaces;
 public interface IProductService
 {
  //Product methods
- Task<(bool IsSuccess, string ErrorMessage)> CreateProductAsync(Product product);
- Task<(bool IsSuccess, string ErrorMessage)> UpdateProductAsync(Product updatedProduct);
+ Task<(bool IsSuccess, string ErrorMessage, Product Product)> CreateProductAsync(Product product);
+ Task<(bool IsSuccess, string ErrorMessage, Product Product)> UpdateProductAsync(Product updatedProduct);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteProductAsync(int productId);
  Task<(bool IsSuccess, string ErrorMessage, List<Product> ProductList)> GetAllProductsAsync();
 }

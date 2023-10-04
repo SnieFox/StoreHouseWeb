@@ -1,4 +1,5 @@
-﻿using StoreHouse.Database.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using StoreHouse.Database.Entities;
 using StoreHouse.Database.Services.Interfaces;
 using StoreHouse.Database.StoreHouseDbContext;
 
@@ -10,26 +11,60 @@ namespace StoreHouse.Database.Services;
  */
 public class SemiProductService : ISemiProductService
 {
- private readonly StoreHouseContext _context;
- public SemiProductService(StoreHouseContext context) => _context = context;
+    private readonly StoreHouseContext _context;
+    public SemiProductService(StoreHouseContext context) => _context = context;
  
- public Task<(bool IsSuccess, string ErrorMessage)> CreateSemiProductAsync(SemiProduct semiProduct)
- {
-  throw new NotImplementedException();
- }
+    //Add SemiProduct to Database
+    public async Task<(bool IsSuccess, string ErrorMessage, SemiProduct SemiProduct)> CreateSemiProductAsync(SemiProduct semiProduct)
+    {
+        await _context.SemiProducts.AddAsync(semiProduct);
+        
+        var saved = await _context.SaveChangesAsync();
+        return saved == 0 ? 
+                        (false, "Something went wrong when adding to db", semiProduct) : 
+                        (true, string.Empty, semiProduct);
+    }
 
- public Task<(bool IsSuccess, string ErrorMessage)> UpdateSemiProductAsync(SemiProduct updatedSemiProduct)
- {
-  throw new NotImplementedException();
- }
+    //Update SemiProduct in Database
+    public async Task<(bool IsSuccess, string ErrorMessage, SemiProduct SemiProduct)> UpdateSemiProductAsync(SemiProduct updatedSemiProduct)
+    {
+        var semiProduct = await _context.SemiProducts.FirstOrDefaultAsync(c => c.Id == updatedSemiProduct.Id);
+        if (semiProduct == null) return (false, "SemiProduct does not exist", updatedSemiProduct);
+        
+        semiProduct.Name = updatedSemiProduct.Name;
+        semiProduct.Output = updatedSemiProduct.Output;
+        semiProduct.PrimeCost = updatedSemiProduct.PrimeCost;
+        semiProduct.Prescription = updatedSemiProduct.Prescription;
+        var saved = await _context.SaveChangesAsync();
+        
+        return saved == 0 ? 
+                        (false, $"Something went wrong when updating SemiProduct {updatedSemiProduct.Id} to db", updatedSemiProduct) : 
+                        (true, string.Empty, updatedSemiProduct);
+    }
 
- public Task<(bool IsSuccess, string ErrorMessage)> DeleteSemiProductAsync(int semiProductId)
- {
-  throw new NotImplementedException();
- }
+    //Delete SemiProduct from Database
+    public async Task<(bool IsSuccess, string ErrorMessage)> DeleteSemiProductAsync(int semiProductId)
+    {
+        var semiProduct = await _context.SemiProducts
+                        .Include(c => c.ProductLists)
+                        .FirstOrDefaultAsync(c => c.Id == semiProductId);
+        if (semiProduct == null) return (false, "Client does not exist");
 
- public Task<(bool IsSuccess, string ErrorMessage, List<SemiProduct> SemiProductList)> GetAllSemiProductsAsync()
- {
-  throw new NotImplementedException();
- }
+        _context.SemiProducts.Remove(semiProduct);
+        var saved = await _context.SaveChangesAsync();
+        
+        return saved == 0 ? 
+                        (false, "Something went wrong when deleting from db") : 
+                        (true, string.Empty);
+    }
+
+    //Get all SemiProduct from Database
+    public async Task<(bool IsSuccess, string ErrorMessage, List<SemiProduct> SemiProductList)> GetAllSemiProductsAsync()
+    {
+        var semiProducts = await _context.SemiProducts
+                        .Include(c => c.ProductLists)
+                        .ToListAsync();
+        
+        return (true, string.Empty, semiProducts);
+    }
 }

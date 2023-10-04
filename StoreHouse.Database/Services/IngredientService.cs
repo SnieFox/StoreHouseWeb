@@ -15,7 +15,7 @@ public class IngredientService : IIngredientService
     public IngredientService(StoreHouseContext context) => _context = context;
  
     //Create Ingredient 
-    public async Task<(bool IsSuccess, string ErrorMessage, Ingredient ingredient)> CreateIngredientAsync(Ingredient ingredient)
+    public async Task<(bool IsSuccess, string ErrorMessage, Ingredient Ingredient)> CreateIngredientAsync(Ingredient ingredient)
     {
         //Create Ingredient
         await _context.Ingredients.AddAsync(ingredient);
@@ -27,7 +27,7 @@ public class IngredientService : IIngredientService
     }
 
     //Update Ingredient
-    public async Task<(bool IsSuccess, string ErrorMessage, Ingredient ingredient)> UpdateIngredientAsync(Ingredient updatedIngredient)
+    public async Task<(bool IsSuccess, string ErrorMessage, Ingredient Ingredient)> UpdateIngredientAsync(Ingredient updatedIngredient)
     {
         //Update Ingredient
         var ingredient = await _context.Ingredients
@@ -47,7 +47,7 @@ public class IngredientService : IIngredientService
         //Remove Ingredient
         var ingredient = await _context.Ingredients
                         .FirstOrDefaultAsync(c => c.Id == ingredientId);
-        if (ingredient == null) return (false, "Client does not exist");
+        if (ingredient == null) return (false, "Ingredient does not exist");
         _context.Ingredients.Remove(ingredient);
         var saved = await _context.SaveChangesAsync();
         

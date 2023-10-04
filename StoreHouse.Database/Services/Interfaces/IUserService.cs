@@ -9,8 +9,8 @@ namespace StoreHouse.Database.Services.Interfaces;
 public interface IUserService
 {
  //User methods
- Task<(bool IsSuccess, string ErrorMessage)> CreateUserAsync(User user);
- Task<(bool IsSuccess, string ErrorMessage)> UpdateUserAsync(User updatedUser);
+ Task<(bool IsSuccess, string ErrorMessage, User User)> CreateUserAsync(User user);
+ Task<(bool IsSuccess, string ErrorMessage, User User)> UpdateUserAsync(User updatedUser);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteUserAsync(int userId);
  Task<(bool IsSuccess, string ErrorMessage, List<User> UserList)> GetAllUsersAsync();
 }

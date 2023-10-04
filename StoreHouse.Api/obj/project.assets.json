@@ -1643,24 +1643,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Xiaomi\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Xiaomi\\OneDrive - Київський національний торговельно-економічний університет\\Робочий стіл\\Prog\\StoreHouseWeb\\StoreHouse.Api\\StoreHouse.Api.csproj",
+      "projectUniqueName": "C:\\Users\\Roflokektikpukpek\\Desktop\\.net learn\\StoreHouseWeb\\StoreHouse.Api\\StoreHouse.Api.csproj",
       "projectName": "StoreHouse.Api",
-      "projectPath": "C:\\Users\\Xiaomi\\OneDrive - Київський національний торговельно-економічний університет\\Робочий стіл\\Prog\\StoreHouseWeb\\StoreHouse.Api\\StoreHouse.Api.csproj",
-      "packagesPath": "C:\\Users\\Xiaomi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Xiaomi\\OneDrive - Київський національний торговельно-економічний університет\\Робочий стіл\\Prog\\StoreHouseWeb\\StoreHouse.Api\\obj\\",
+      "projectPath": "C:\\Users\\Roflokektikpukpek\\Desktop\\.net learn\\StoreHouseWeb\\StoreHouse.Api\\StoreHouse.Api.csproj",
+      "packagesPath": "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Roflokektikpukpek\\Desktop\\.net learn\\StoreHouseWeb\\StoreHouse.Api\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Xiaomi\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Roflokektikpukpek\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1674,8 +1669,8 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "C:\\Users\\Xiaomi\\OneDrive - Київський національний торговельно-економічний університет\\Робочий стіл\\Prog\\StoreHouseWeb\\StoreHouse.Database\\StoreHouse.Database.csproj": {
-              "projectPath": "C:\\Users\\Xiaomi\\OneDrive - Київський національний торговельно-економічний університет\\Робочий стіл\\Prog\\StoreHouseWeb\\StoreHouse.Database\\StoreHouse.Database.csproj"
+            "C:\\Users\\Roflokektikpukpek\\Desktop\\.net learn\\StoreHouseWeb\\StoreHouse.Database\\StoreHouse.Database.csproj": {
+              "projectPath": "C:\\Users\\Roflokektikpukpek\\Desktop\\.net learn\\StoreHouseWeb\\StoreHouse.Database\\StoreHouse.Database.csproj"
             }
           }
         }
@@ -1742,7 +1737,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.200\\RuntimeIdentifierGraph.json"
       }
     }
   }

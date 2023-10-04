@@ -9,7 +9,7 @@ namespace StoreHouse.Database.Services.Interfaces;
 public interface IReceiptService
 {
  //Receipt methods
- Task<(bool IsSuccess, string ErrorMessage)> CreateReceiptAsync(Receipt receipt);
+ Task<(bool IsSuccess, string ErrorMessage, Receipt Receipt)> CreateReceiptAsync(Receipt receipt);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteReceiptAsync(int receiptId);
  Task<(bool IsSuccess, string ErrorMessage, List<Receipt> ReceiptList)> GetAllReceiptsAsync();
 }

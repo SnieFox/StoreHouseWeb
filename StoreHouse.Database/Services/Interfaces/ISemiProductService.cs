@@ -9,8 +9,8 @@ namespace StoreHouse.Database.Services.Interfaces;
 public interface ISemiProductService
 {
  //SemiProduct methods
- Task<(bool IsSuccess, string ErrorMessage)> CreateSemiProductAsync(SemiProduct semiProduct);
- Task<(bool IsSuccess, string ErrorMessage)> UpdateSemiProductAsync(SemiProduct updatedSemiProduct);
+ Task<(bool IsSuccess, string ErrorMessage, SemiProduct SemiProduct)> CreateSemiProductAsync(SemiProduct semiProduct);
+ Task<(bool IsSuccess, string ErrorMessage, SemiProduct SemiProduct)> UpdateSemiProductAsync(SemiProduct updatedSemiProduct);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteSemiProductAsync(int semiProductId);
  Task<(bool IsSuccess, string ErrorMessage, List<SemiProduct> SemiProductList)> GetAllSemiProductsAsync();
 }

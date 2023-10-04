@@ -14,9 +14,14 @@ public class ProductCategoryService : IProductCategoryService
     private readonly StoreHouseContext _context;
     public ProductCategoryService(StoreHouseContext context) => _context = context;
  
-    public Task<(bool IsSuccess, string ErrorMessage)> CreateProductCategoryAsync(ProductCategory productCategory)
+    public async Task<(bool IsSuccess, string ErrorMessage, ProductCategory ProductCategory)> CreateProductCategoryAsync(ProductCategory productCategory)
     {
-        throw new NotImplementedException();
+        await _context.ProductCategories.AddAsync(productCategory);
+        
+        var saved = await _context.SaveChangesAsync();
+        return saved == 0 ? 
+                        (false, "Something went wrong when adding to db", productCategory) : 
+                        (true, string.Empty, productCategory);
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteProductCategoryAsync(int productCategoryId)

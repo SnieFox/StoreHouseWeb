@@ -9,7 +9,7 @@ namespace StoreHouse.Database.Services.Interfaces;
 public interface IProductCategoryService
 {
  //ProductCategory methods
- Task<(bool IsSuccess, string ErrorMessage)> CreateProductCategoryAsync(ProductCategory productCategory);
+ Task<(bool IsSuccess, string ErrorMessage, ProductCategory ProductCategory)> CreateProductCategoryAsync(ProductCategory productCategory);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteProductCategoryAsync(int productCategoryId);
  Task<(bool IsSuccess, string ErrorMessage, List<ProductCategory> ProductCategoryList)> GetAllProductCategoriesAsync();
 }

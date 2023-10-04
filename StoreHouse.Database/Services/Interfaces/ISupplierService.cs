@@ -9,8 +9,8 @@ namespace StoreHouse.Database.Services.Interfaces;
 public interface ISupplierService
 {
  //Supplier methods
- Task<(bool IsSuccess, string ErrorMessage)> CreateSupplierAsync(Supplier supplier);
- Task<(bool IsSuccess, string ErrorMessage)> UpdateSupplierAsync(Supplier updatedSupplier);
+ Task<(bool IsSuccess, string ErrorMessage, Supplier Supplier)> CreateSupplierAsync(Supplier supplier);
+ Task<(bool IsSuccess, string ErrorMessage, Supplier Supplier)> UpdateSupplierAsync(Supplier updatedSupplier);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteSupplierAsync(int supplierId);
  Task<(bool IsSuccess, string ErrorMessage, List<Supplier> SupplierList)> GetAllSuppliersAsync();
 }

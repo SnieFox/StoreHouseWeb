@@ -47,7 +47,9 @@ public class ClientService : IClientService
     //Delete Client from Database
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteClientAsync(int clientId)
     {
-        var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
+        var client = await _context.Clients
+                        .Include(c => c.Receipts)
+                        .FirstOrDefaultAsync(c => c.Id == clientId);
         if (client == null) return (false, "Client does not exist");
 
         _context.Clients.Remove(client);

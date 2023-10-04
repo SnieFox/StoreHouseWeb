@@ -9,7 +9,7 @@ namespace StoreHouse.Database.Services.Interfaces;
 public interface IWriteOffCauseService
 {
  //WriteOffCause methods
- Task<(bool IsSuccess, string ErrorMessage)> CreateWriteOffCauseAsync(WriteOffCause writeOffCause);
+ Task<(bool IsSuccess, string ErrorMessage, WriteOffCause WriteOffCause)> CreateWriteOffCauseAsync(WriteOffCause writeOffCause);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffCauseAsync(int writeOffCauseId);
  Task<(bool IsSuccess, string ErrorMessage, List<WriteOffCause> WriteOffCauseList)> GetAllWriteOffCausesAsync();
 }
