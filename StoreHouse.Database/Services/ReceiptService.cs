@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StoreHouse.Database.Entities;
+using StoreHouse.Database.Extensions;
 using StoreHouse.Database.Services.Interfaces;
 using StoreHouse.Database.StoreHouseDbContext;
 
@@ -17,38 +18,66 @@ public class ReceiptService : IReceiptService
     //Create Receipt
     public async Task<(bool IsSuccess, string ErrorMessage, Receipt Receipt)> CreateReceiptAsync(Receipt receipt)
     {
-        //Create Receipt
-        await _context.Receipts.AddAsync(receipt);
-        var saved = await _context.SaveChangesAsync();
-                        
-        return saved == 0 ? 
-                        (false, $"Something went wrong when deleting from db", receipt) : 
-                        (true, string.Empty, receipt);
+        try
+        {
+            //Create Receipt
+            await _context.Receipts.AddAsync(receipt);
+            var saved = await _context.SaveChangesAsync();
+
+            var updateResult =
+                            await SupportingMethodExtension.UpdateRemainsAsync(_context, receipt.ProductLists, false);
+            if (!updateResult.IsSuccess)
+                return (false, $"Update of Remains Failed. {updateResult.ErrorMessage}", receipt);
+
+            return saved == 0
+                            ? (false, $"Something went wrong when deleting from db", receipt)
+                            : (true, string.Empty, receipt);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, receipt);
+        }
     }
 
     //Remove Receipt
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteReceiptAsync(int receiptId)
     {
-        //Remove Receipt
-        var receipt = await _context.Receipts
-                        .Include(c => c.ProductLists)
-                        .FirstOrDefaultAsync(c => c.Id == receiptId);
-        if (receipt == null) return (false, "Receipt does not exist");
-        _context.Receipts.Remove(receipt);
-        var saved = await _context.SaveChangesAsync();
-        
-        return saved == 0 ? 
-                        (false, $"Something went wrong when deleting from db") : 
-                        (true, string.Empty);
+        try
+        {
+            //Remove Receipt
+            var receipt = await _context.Receipts
+                            .Include(c => c.ProductLists)
+                            .FirstOrDefaultAsync(c => c.Id == receiptId);
+            if (receipt == null) return (false, "Receipt does not exist");
+
+            var updateResult = await SupportingMethodExtension.UpdateRemainsAsync(_context, receipt.ProductLists, true);
+            if (!updateResult.IsSuccess) return (false, $"Update of Remains Failed. {updateResult.ErrorMessage}");
+
+            _context.Receipts.Remove(receipt);
+            var saved = await _context.SaveChangesAsync();
+
+            return saved == 0 ? (false, $"Something went wrong when deleting from db") : (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     //Get all Receipts
     public async Task<(bool IsSuccess, string ErrorMessage, List<Receipt> ReceiptList)> GetAllReceiptsAsync()
     {
-        var receipts = await _context.Receipts
-                        .Include(c => c.ProductLists)
-                        .ToListAsync();
-        
-        return (true, string.Empty, receipts);
+        try
+        {
+            var receipts = await _context.Receipts
+                            .Include(c => c.ProductLists)
+                            .ToListAsync();
+
+            return (true, string.Empty, receipts);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<Receipt>());
+        }
     }
 }

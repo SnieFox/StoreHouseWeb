@@ -18,35 +18,54 @@ public class DishCategoryService : IDishCategoryService
     //Add DishesCategory to Database
     public async Task<(bool IsSuccess, string ErrorMessage, DishesCategory DishesCategory)> CreateDishCategoryAsync(DishesCategory dishCategory)
     {
-        await _context.DishesCategories.AddAsync(dishCategory);
-        
-        var saved = await _context.SaveChangesAsync();
-        return saved == 0 ? 
-                        (false, "Something went wrong when adding to db", dishCategory) : 
-                        (true, string.Empty, dishCategory);
+        try
+        {
+            await _context.DishesCategories.AddAsync(dishCategory);
+
+            var saved = await _context.SaveChangesAsync();
+            return saved == 0
+                            ? (false, "Something went wrong when adding to db", dishCategory)
+                            : (true, string.Empty, dishCategory);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, dishCategory);
+        }
     }
 
     //Delete DishesCategory from Database
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteDishCategoryAsync(int dishCategoryId)
     {
-        var dishCategory = await _context.DishesCategories
-                        .Include(d => d.Dishes)
-                        .FirstOrDefaultAsync(d => d.Id == dishCategoryId);
-        if (dishCategory == null) return (false, "Client does not exist");
+        try
+        {
+            var dishCategory = await _context.DishesCategories
+                            .Include(d => d.Dishes)
+                            .FirstOrDefaultAsync(d => d.Id == dishCategoryId);
+            if (dishCategory == null) return (false, "Client does not exist");
 
-        _context.DishesCategories.Remove(dishCategory);
-        var saved = await _context.SaveChangesAsync();
-        
-        return saved == 0 ? 
-                        (false, "Something went wrong when deleting from db") : 
-                        (true, string.Empty);
+            _context.DishesCategories.Remove(dishCategory);
+            var saved = await _context.SaveChangesAsync();
+
+            return saved == 0 ? (false, "Something went wrong when deleting from db") : (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     //Get all DishesCategories from Database
     public async Task<(bool IsSuccess, string ErrorMessage, List<DishesCategory> DishCategoryList)> GetAllDishCategoriesAsync()
     {
-        var dishesCategories = await _context.DishesCategories.ToListAsync();
-        
-        return (true, string.Empty, dishesCategories);
+        try
+        {
+            var dishesCategories = await _context.DishesCategories.ToListAsync();
+
+            return (true, string.Empty, dishesCategories);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<DishesCategory>());
+        }
     }
 }

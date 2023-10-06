@@ -17,34 +17,53 @@ public class WriteOffCauseService : IWriteOffCauseService
     //Add WriteOffCause to Database
     public async Task<(bool IsSuccess, string ErrorMessage, WriteOffCause WriteOffCause)> CreateWriteOffCauseAsync(WriteOffCause writeOffCause)
     {
-        await _context.WriteOffCauses.AddAsync(writeOffCause);
-        
-        var saved = await _context.SaveChangesAsync();
-        return saved == 0 ? 
-                        (false, "Something went wrong when adding to db", writeOffCause) : 
-                        (true, string.Empty, writeOffCause);
+        try
+        {
+            await _context.WriteOffCauses.AddAsync(writeOffCause);
+
+            var saved = await _context.SaveChangesAsync();
+            return saved == 0
+                            ? (false, "Something went wrong when adding to db", writeOffCause)
+                            : (true, string.Empty, writeOffCause);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, writeOffCause);
+        }
     }
 
     //Delete WriteOffCause from Database
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffCauseAsync(int writeOffCauseId)
     {
-        var writeOffCause = await _context.WriteOffCauses
-                        .Include(c => c.WriteOffs)
-                        .FirstOrDefaultAsync(c => c.Id == writeOffCauseId);
-        if (writeOffCause == null) return (false, "Client does not exist");
+        try
+        {
+            var writeOffCause = await _context.WriteOffCauses
+                            .Include(c => c.WriteOffs)
+                            .FirstOrDefaultAsync(c => c.Id == writeOffCauseId);
+            if (writeOffCause == null) return (false, "Client does not exist");
 
-        _context.WriteOffCauses.Remove(writeOffCause);
-        var saved = await _context.SaveChangesAsync();
-        
-        return saved == 0 ? 
-                        (false, "Something went wrong when deleting from db") : 
-                        (true, string.Empty);
+            _context.WriteOffCauses.Remove(writeOffCause);
+            var saved = await _context.SaveChangesAsync();
+
+            return saved == 0 ? (false, "Something went wrong when deleting from db") : (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<WriteOffCause> WriteOffCauseList)> GetAllWriteOffCausesAsync()
     {
-        var writeOffCauses = await _context.WriteOffCauses.ToListAsync();
-        
-        return (true, string.Empty, writeOffCauses);
+        try
+        {
+            var writeOffCauses = await _context.WriteOffCauses.ToListAsync();
+
+            return (true, string.Empty, writeOffCauses);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<WriteOffCause>());
+        }
     }
 }

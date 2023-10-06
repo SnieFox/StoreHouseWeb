@@ -16,34 +16,53 @@ public class ProductCategoryService : IProductCategoryService
  
     public async Task<(bool IsSuccess, string ErrorMessage, ProductCategory ProductCategory)> CreateProductCategoryAsync(ProductCategory productCategory)
     {
-        await _context.ProductCategories.AddAsync(productCategory);
-        
-        var saved = await _context.SaveChangesAsync();
-        return saved == 0 ? 
-                        (false, "Something went wrong when adding to db", productCategory) : 
-                        (true, string.Empty, productCategory);
+        try
+        {
+            await _context.ProductCategories.AddAsync(productCategory);
+
+            var saved = await _context.SaveChangesAsync();
+            return saved == 0
+                            ? (false, "Something went wrong when adding to db", productCategory)
+                            : (true, string.Empty, productCategory);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, productCategory);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteProductCategoryAsync(int productCategoryId)
     {
-        //Delete Category and Related Products
-        var productCategory = await _context.ProductCategories
-                        .Include(p => p.Products)
-                        .FirstOrDefaultAsync(d => d.Id == productCategoryId);
-        if (productCategory == null) return (false, "Client does not exist");
+        try
+        {
+            //Delete Category and Related Products
+            var productCategory = await _context.ProductCategories
+                            .Include(p => p.Products)
+                            .FirstOrDefaultAsync(d => d.Id == productCategoryId);
+            if (productCategory == null) return (false, "Client does not exist");
 
-        _context.ProductCategories.Remove(productCategory);
-        var saved = await _context.SaveChangesAsync();
-        
-        return saved == 0 ? 
-                        (false, "Something went wrong when deleting from db") : 
-                        (true, string.Empty);
+            _context.ProductCategories.Remove(productCategory);
+            var saved = await _context.SaveChangesAsync();
+
+            return saved == 0 ? (false, "Something went wrong when deleting from db") : (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<ProductCategory> ProductCategoryList)> GetAllProductCategoriesAsync()
     {
-        var productCategories = await _context.ProductCategories.ToListAsync();
-        
-        return (true, string.Empty, productCategories);
+        try
+        {
+            var productCategories = await _context.ProductCategories.ToListAsync();
+
+            return (true, string.Empty, productCategories);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<ProductCategory>());
+        }
     }
 }

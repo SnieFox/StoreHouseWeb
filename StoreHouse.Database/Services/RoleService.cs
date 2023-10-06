@@ -17,37 +17,54 @@ public class RoleService : IRoleService
     //Add Role to Database
     public async Task<(bool IsSuccess, string ErrorMessage, Role Role)> CreateRoleAsync(Role role)
     {
-        await _context.Roles.AddAsync(role);
-        
-        var saved = await _context.SaveChangesAsync();
-        return saved == 0 ? 
-                        (false, "Something went wrong when adding to db", role) : 
-                        (true, string.Empty, role);
+        try
+        {
+            await _context.Roles.AddAsync(role);
+
+            var saved = await _context.SaveChangesAsync();
+            return saved == 0 ? (false, "Something went wrong when adding to db", role) : (true, string.Empty, role);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, role);
+        }
     }
 
     //Delete Role from Database
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteRoleAsync(int roleId)
     {
-        var role = await _context.Roles
-                        .Include(d => d.Users)
-                        .FirstOrDefaultAsync(d => d.Id == roleId);
-        if (role == null) return (false, "Role does not exist");
+        try
+        {
+            var role = await _context.Roles
+                            .Include(d => d.Users)
+                            .FirstOrDefaultAsync(d => d.Id == roleId);
+            if (role == null) return (false, "Role does not exist");
 
-        _context.Roles.Remove(role);
-        var saved = await _context.SaveChangesAsync();
-        
-        return saved == 0 ? 
-                        (false, "Something went wrong when deleting from db") : 
-                        (true, string.Empty);
+            _context.Roles.Remove(role);
+            var saved = await _context.SaveChangesAsync();
+
+            return saved == 0 ? (false, "Something went wrong when deleting from db") : (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     //Get all Roles from Database
     public async Task<(bool IsSuccess, string ErrorMessage, List<Role> RoleList)> GetAllRolesAsync()
     {
-        var roles = await _context.Roles
-                        .Include(c => c.Users)
-                        .ToListAsync();
-        
-        return (true, string.Empty, roles);
+        try
+        {
+            var roles = await _context.Roles
+                            .Include(c => c.Users)
+                            .ToListAsync();
+
+            return (true, string.Empty, roles);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<Role>());
+        }
     }
 }

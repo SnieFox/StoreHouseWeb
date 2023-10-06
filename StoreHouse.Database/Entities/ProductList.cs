@@ -3,11 +3,11 @@
 public class ProductList
 {
     public int Id { get; set; }
-    public int DishId { get; set; }
-    public int SemiProductId { get; set; }
-    public int WriteOffId { get; set; }
-    public int SupplyId { get; set; }
-    public int ReceiptId { get; set; }
+    public int? DishId { get; set; }
+    public int? SemiProductId { get; set; }
+    public int? WriteOffId { get; set; }
+    public int? SupplyId { get; set; }
+    public int? ReceiptId { get; set; }
     public string Name { get; set; } = string.Empty;
     public double Count { get; set; }
     public decimal Sum { get; set; }
