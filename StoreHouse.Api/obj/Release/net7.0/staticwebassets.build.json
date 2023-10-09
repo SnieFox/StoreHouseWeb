@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "+lwUmnRomXyLaIzPhmwlJXBSjY+qe8uOGBkjhSr5gls=",
+  "Source": "StoreHouse.Api",
+  "BasePath": "_content/StoreHouse.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

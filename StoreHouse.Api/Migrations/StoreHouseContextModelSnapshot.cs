@@ -179,6 +179,9 @@ namespace StoreHouse.Api.Migrations
                     b.Property<decimal>("PrimeCost")
                         .HasColumnType("numeric");
 
+                    b.Property<double>("Remains")
+                        .HasColumnType("double precision");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -221,7 +224,7 @@ namespace StoreHouse.Api.Migrations
                     b.Property<double>("Count")
                         .HasColumnType("double precision");
 
-                    b.Property<int>("DishId")
+                    b.Property<int?>("DishId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -231,19 +234,19 @@ namespace StoreHouse.Api.Migrations
                     b.Property<decimal>("PrimeCost")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("ReceiptId")
+                    b.Property<int?>("ReceiptId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SemiProductId")
+                    b.Property<int?>("SemiProductId")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Sum")
                         .HasColumnType("numeric");
 
-                    b.Property<int>("SupplyId")
+                    b.Property<int?>("SupplyId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("WriteOffId")
+                    b.Property<int?>("WriteOffId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -537,32 +540,27 @@ namespace StoreHouse.Api.Migrations
                     b.HasOne("StoreHouse.Database.Entities.Dish", "Dish")
                         .WithMany("ProductLists")
                         .HasForeignKey("DishId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("StoreHouse.Database.Entities.Receipt", "Receipt")
                         .WithMany("ProductLists")
                         .HasForeignKey("ReceiptId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("StoreHouse.Database.Entities.SemiProduct", "SemiProduct")
                         .WithMany("ProductLists")
                         .HasForeignKey("SemiProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("StoreHouse.Database.Entities.Supply", "Supply")
                         .WithMany("ProductLists")
                         .HasForeignKey("SupplyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("StoreHouse.Database.Entities.WriteOff", "WriteOff")
                         .WithMany("ProductLists")
                         .HasForeignKey("WriteOffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Dish");
 

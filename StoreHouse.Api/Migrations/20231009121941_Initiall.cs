@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace StoreHouse.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMigration : Migration
+    public partial class Initiall : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -130,7 +130,7 @@ namespace StoreHouse.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Dishes",
+                name: "Dish",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -141,9 +141,9 @@ namespace StoreHouse.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Dishes", x => x.Id);
+                    table.PrimaryKey("PK_Dish", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Dishes_DishesCategories_CategoryId",
+                        name: "FK_Dish_DishesCategories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "DishesCategories",
                         principalColumn: "Id",
@@ -151,7 +151,7 @@ namespace StoreHouse.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ingredients",
+                name: "Ingredient",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -164,9 +164,9 @@ namespace StoreHouse.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Ingredients", x => x.Id);
+                    table.PrimaryKey("PK_Ingredient", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ingredients_IngredientsCategories_CategoryId",
+                        name: "FK_Ingredient_IngredientsCategories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "IngredientsCategories",
                         principalColumn: "Id",
@@ -174,7 +174,7 @@ namespace StoreHouse.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "Product",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -183,13 +183,14 @@ namespace StoreHouse.Api.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     ImageId = table.Column<string>(type: "text", nullable: true),
                     PrimeCost = table.Column<decimal>(type: "numeric", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false)
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Remains = table.Column<double>(type: "double precision", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_Product", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_ProductCategories_CategoryId",
+                        name: "FK_Product_ProductCategories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "ProductCategories",
                         principalColumn: "Id",
@@ -197,12 +198,12 @@ namespace StoreHouse.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "User",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    RoleId = table.Column<int>(type: "integer", nullable: true),
                     FullName = table.Column<string>(type: "text", nullable: false),
                     HashedLogin = table.Column<string>(type: "text", nullable: false),
                     HashedPassword = table.Column<string>(type: "text", nullable: false),
@@ -212,23 +213,22 @@ namespace StoreHouse.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_User", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_Roles_RoleId",
+                        name: "FK_User_Roles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Receipts",
+                name: "Receipt",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ClientId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    ClientId = table.Column<int>(type: "integer", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: true),
                     ClientName = table.Column<string>(type: "text", nullable: false),
                     UserName = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
@@ -237,29 +237,27 @@ namespace StoreHouse.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Receipts", x => x.Id);
+                    table.PrimaryKey("PK_Receipt", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Receipts_Clients_ClientId",
+                        name: "FK_Receipt_Clients_ClientId",
                         column: x => x.ClientId,
                         principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Receipts_Users_UserId",
+                        name: "FK_Receipt_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "User",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Supplies",
+                name: "Supply",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    SupplierId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    SupplierId = table.Column<int>(type: "integer", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: true),
                     UserName = table.Column<string>(type: "text", nullable: false),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Sum = table.Column<decimal>(type: "numeric", nullable: false),
@@ -267,48 +265,44 @@ namespace StoreHouse.Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Supplies", x => x.Id);
+                    table.PrimaryKey("PK_Supply", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Supplies_Suppliers_SupplierId",
+                        name: "FK_Supply_Suppliers_SupplierId",
                         column: x => x.SupplierId,
                         principalTable: "Suppliers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Supplies_Users_UserId",
+                        name: "FK_Supply_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "User",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "WriteOffs",
+                name: "WriteOff",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CauseId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    CauseId = table.Column<int>(type: "integer", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: true),
                     UserName = table.Column<string>(type: "text", nullable: false),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Comment = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WriteOffs", x => x.Id);
+                    table.PrimaryKey("PK_WriteOff", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WriteOffs_Users_UserId",
+                        name: "FK_WriteOff_User_UserId",
                         column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalTable: "User",
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_WriteOffs_WriteOffCauses_CauseId",
+                        name: "FK_WriteOff_WriteOffCauses_CauseId",
                         column: x => x.CauseId,
                         principalTable: "WriteOffCauses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -317,11 +311,11 @@ namespace StoreHouse.Api.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    DishId = table.Column<int>(type: "integer", nullable: false),
-                    SemiProductId = table.Column<int>(type: "integer", nullable: false),
-                    WriteOffId = table.Column<int>(type: "integer", nullable: false),
-                    SupplyId = table.Column<int>(type: "integer", nullable: false),
-                    ReceiptId = table.Column<int>(type: "integer", nullable: false),
+                    DishId = table.Column<int>(type: "integer", nullable: true),
+                    SemiProductId = table.Column<int>(type: "integer", nullable: true),
+                    WriteOffId = table.Column<int>(type: "integer", nullable: true),
+                    SupplyId = table.Column<int>(type: "integer", nullable: true),
+                    ReceiptId = table.Column<int>(type: "integer", nullable: true),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Count = table.Column<double>(type: "double precision", nullable: false),
                     Sum = table.Column<decimal>(type: "numeric", nullable: false),
@@ -332,15 +326,15 @@ namespace StoreHouse.Api.Migrations
                 {
                     table.PrimaryKey("PK_ProductList", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProductList_Dishes_DishId",
+                        name: "FK_ProductList_Dish_DishId",
                         column: x => x.DishId,
-                        principalTable: "Dishes",
+                        principalTable: "Dish",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductList_Receipts_ReceiptId",
+                        name: "FK_ProductList_Receipt_ReceiptId",
                         column: x => x.ReceiptId,
-                        principalTable: "Receipts",
+                        principalTable: "Receipt",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -350,27 +344,32 @@ namespace StoreHouse.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductList_Supplies_SupplyId",
+                        name: "FK_ProductList_Supply_SupplyId",
                         column: x => x.SupplyId,
-                        principalTable: "Supplies",
+                        principalTable: "Supply",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProductList_WriteOffs_WriteOffId",
+                        name: "FK_ProductList_WriteOff_WriteOffId",
                         column: x => x.WriteOffId,
-                        principalTable: "WriteOffs",
+                        principalTable: "WriteOff",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dishes_CategoryId",
-                table: "Dishes",
+                name: "IX_Dish_CategoryId",
+                table: "Dish",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ingredients_CategoryId",
-                table: "Ingredients",
+                name: "IX_Ingredient_CategoryId",
+                table: "Ingredient",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_CategoryId",
+                table: "Product",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
@@ -399,43 +398,38 @@ namespace StoreHouse.Api.Migrations
                 column: "WriteOffId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_CategoryId",
-                table: "Products",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Receipts_ClientId",
-                table: "Receipts",
+                name: "IX_Receipt_ClientId",
+                table: "Receipt",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Receipts_UserId",
-                table: "Receipts",
+                name: "IX_Receipt_UserId",
+                table: "Receipt",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Supplies_SupplierId",
-                table: "Supplies",
+                name: "IX_Supply_SupplierId",
+                table: "Supply",
                 column: "SupplierId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Supplies_UserId",
-                table: "Supplies",
+                name: "IX_Supply_UserId",
+                table: "Supply",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_RoleId",
-                table: "Users",
+                name: "IX_User_RoleId",
+                table: "User",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WriteOffs_CauseId",
-                table: "WriteOffs",
+                name: "IX_WriteOff_CauseId",
+                table: "WriteOff",
                 column: "CauseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WriteOffs_UserId",
-                table: "WriteOffs",
+                name: "IX_WriteOff_UserId",
+                table: "WriteOff",
                 column: "UserId");
         }
 
@@ -443,34 +437,34 @@ namespace StoreHouse.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Ingredients");
+                name: "Ingredient");
+
+            migrationBuilder.DropTable(
+                name: "Product");
 
             migrationBuilder.DropTable(
                 name: "ProductList");
 
             migrationBuilder.DropTable(
-                name: "Products");
-
-            migrationBuilder.DropTable(
                 name: "IngredientsCategories");
 
             migrationBuilder.DropTable(
-                name: "Dishes");
+                name: "ProductCategories");
 
             migrationBuilder.DropTable(
-                name: "Receipts");
+                name: "Dish");
+
+            migrationBuilder.DropTable(
+                name: "Receipt");
 
             migrationBuilder.DropTable(
                 name: "SemiProducts");
 
             migrationBuilder.DropTable(
-                name: "Supplies");
+                name: "Supply");
 
             migrationBuilder.DropTable(
-                name: "WriteOffs");
-
-            migrationBuilder.DropTable(
-                name: "ProductCategories");
+                name: "WriteOff");
 
             migrationBuilder.DropTable(
                 name: "DishesCategories");
@@ -482,7 +476,7 @@ namespace StoreHouse.Api.Migrations
                 name: "Suppliers");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "User");
 
             migrationBuilder.DropTable(
                 name: "WriteOffCauses");
