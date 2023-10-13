@@ -24,8 +24,7 @@ public class WriteOffService : IWriteOffService
             await _context.WriteOffs.AddAsync(writeOff);
             var saved = await _context.SaveChangesAsync();
 
-            var updateResult =
-                            await SupportingMethodExtension.UpdateRemainsAsync(_context, writeOff.ProductLists, false);
+            var updateResult = await _context.UpdateRemainsAsync(writeOff.ProductLists, false);
             if (!updateResult.IsSuccess)
                 return (false, $"Update of Remains Failed. {updateResult.ErrorMessage}", writeOff);
 

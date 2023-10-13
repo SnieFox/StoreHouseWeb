@@ -8,7 +8,7 @@ namespace StoreHouse.Database.Extensions;
 public static class SupportingMethodExtension
 {
     //Method to Update Remains of Ingredients and Products
-    public static async Task<(bool IsSuccess, string ErrorMessage)> UpdateRemainsAsync(StoreHouseContext dbService, List<ProductList> productList, bool increase)
+    public static async Task<(bool IsSuccess, string ErrorMessage)> UpdateRemainsAsync(this StoreHouseContext dbService, List<ProductList> productList, bool increase)
     {
         try
         {

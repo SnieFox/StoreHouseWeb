@@ -23,8 +23,8 @@ public class ClientService : IClientService
 
             var saved = await _context.SaveChangesAsync();
             return saved == 0
-                            ? (false, "Something went wrong when adding to db", client)
-                            : (true, string.Empty, client);
+                ? (false, "Something went wrong when adding to db", client)
+                : (true, string.Empty, client);
         }
         catch (Exception e)
         {

@@ -1,0 +1,8 @@
+﻿services:
+  storehouse.api:
+    image: storehouse.api
+    ports:
+      - "5000:80"
+    build:
+      context: .
+      dockerfile: StoreHouse.Api/Dockerfile
