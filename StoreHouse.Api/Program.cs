@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using StoreHouse.Api.Model.Extensions;
+using StoreHouse.Api.Model.Mapping;
 using StoreHouse.Database.Extensions;
 using StoreHouse.Database.Services;
 using StoreHouse.Database.Services.Interfaces;
@@ -10,10 +12,15 @@ builder.Services.AddCors();
 //Database Context
 var sqlServerConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbServices(sqlServerConnectionString);
+//Api Services
+builder.Services.AddApiServices();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//AutoMapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 

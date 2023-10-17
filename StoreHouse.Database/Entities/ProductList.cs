@@ -10,7 +10,7 @@ public class ProductList
     public int? ReceiptId { get; set; }
     public string Name { get; set; } = string.Empty;
     public double Count { get; set; }
-    public decimal Sum { get; set; }
+    public decimal Price { get; set; }
     public decimal PrimeCost { get; set; }
     public string Comment { get; set; } = string.Empty;
     

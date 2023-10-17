@@ -85,7 +85,10 @@ public class ClientService : IClientService
     {
         try
         {
-            var clients = await _context.Clients.ToListAsync();
+            var clients = await _context.Clients
+                .Include(c => c.Receipts)
+                .ThenInclude(p => p.ProductLists)
+                .ToListAsync();
 
             return (true, string.Empty, clients);
         }

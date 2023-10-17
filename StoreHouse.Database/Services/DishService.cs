@@ -60,7 +60,7 @@ public class DishService : IDishService
                     existingProduct.ReceiptId = product.ReceiptId;
                     existingProduct.Name = product.Name;
                     existingProduct.Count = product.Count;
-                    existingProduct.Sum = product.Sum;
+                    existingProduct.Price = product.Price;
                     existingProduct.PrimeCost = product.PrimeCost;
                     existingProduct.Comment = product.Comment;
                 }

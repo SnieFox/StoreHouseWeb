@@ -93,4 +93,20 @@ public class ProductService : IProductService
             return (false, e.Message, new List<Product>());
         }
     }
+
+    public async Task<(bool IsSuccess, string ErrorMessage, List<ProductList> ProductList)> GetProductListByNameAsync(string name)
+    {
+        try
+        {
+            var productsList = await _context.ProductLists
+                .Where(p => p.Name == name && p.ReceiptId != 0)
+                .ToListAsync();
+
+            return (true, string.Empty, productsList);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<ProductList>());
+        }
+    }
 }

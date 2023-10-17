@@ -13,4 +13,5 @@ public interface IProductService
  Task<(bool IsSuccess, string ErrorMessage, Product Product)> UpdateProductAsync(Product updatedProduct);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteProductAsync(int productId);
  Task<(bool IsSuccess, string ErrorMessage, List<Product> ProductList)> GetAllProductsAsync();
+ Task<(bool IsSuccess, string ErrorMessage, List<ProductList> ProductList)> GetProductListByNameAsync(string name);
 }

@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
@@ -34,7 +36,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model\Services\" />
+    <Folder Include="Services\CheckoutServices\CheckoutInterfaces\" />
+    <Folder Include="Services\ManageServices\ManageInterfaces\" />
+    <Folder Include="Services\MenuServices\MenuInterfaces\" />
+    <Folder Include="Services\StorageServices\StorageInterfaces\" />
   </ItemGroup>
 
 </Project>

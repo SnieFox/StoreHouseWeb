@@ -1,12 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "Wnp/HSWo2z/G9z4i9g53O5dxSBWEGIPCY3XmHp5G4hOLTskrNjmvJ6lzTL+NPH8FaelHjYe8zGVSuIk5GKOSmw==",
+  "dgSpecHash": "5bEVPjEjrEEkgaWW5x3CVXtUEMHwf0tas5FiNNZL2yeR65K27yDjwXDfIF7pd2pc6F9RogSKNTG3Kpb97dHeng==",
   "success": true,
   "projectFilePath": "C:\\Users\\Roflokektikpukpek\\Desktop\\.net learn\\StoreHouseWeb\\StoreHouse.Api\\StoreHouse.Api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\microsoft.aspnetcore.openapi\\7.0.3\\microsoft.aspnetcore.openapi.7.0.3.nupkg.sha512",
+    "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\microsoft.entityframeworkcore\\7.0.11\\microsoft.entityframeworkcore.7.0.11.nupkg.sha512",
     "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\7.0.11\\microsoft.entityframeworkcore.abstractions.7.0.11.nupkg.sha512",
     "C:\\Users\\Roflokektikpukpek\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\7.0.11\\microsoft.entityframeworkcore.analyzers.7.0.11.nupkg.sha512",

@@ -221,7 +221,7 @@ public class StoreHouseContext : DbContext
 
             entity.Property(e => e.Name);
             entity.Property(e => e.Count);
-            entity.Property(e => e.Sum);
+            entity.Property(e => e.Price);
             entity.Property(e => e.PrimeCost);
             entity.Property(e => e.Comment);
         });
