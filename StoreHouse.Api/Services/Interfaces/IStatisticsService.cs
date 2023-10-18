@@ -1,7 +1,7 @@
 ﻿using StoreHouse.Api.Model.DTO.StatisticsDTO;
 using StoreHouse.Database.Entities;
 
-namespace StoreHouse.Api.Services.StatisticsServices.StatisticsInterfaces;
+namespace StoreHouse.Api.Services.Interfaces;
 
 public interface IStatisticsService
 {

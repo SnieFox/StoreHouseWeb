@@ -1,5 +1,5 @@
-﻿using StoreHouse.Api.Services.StatisticsServices;
-using StoreHouse.Api.Services.StatisticsServices.StatisticsInterfaces;
+﻿using StoreHouse.Api.Services;
+using StoreHouse.Api.Services.Interfaces;
 
 namespace StoreHouse.Api.Model.Extensions;
 
@@ -13,6 +13,7 @@ public static class ApiServiceCollectionsExtensions
         }
         
         services.AddScoped<IStatisticsService, StatisticsService>();
+        services.AddScoped<IStorageService, StorageService>();
 
         return services;
     }

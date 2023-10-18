@@ -35,11 +35,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\CheckoutServices\CheckoutInterfaces\" />
-    <Folder Include="Services\ManageServices\ManageInterfaces\" />
-    <Folder Include="Services\MenuServices\MenuInterfaces\" />
-    <Folder Include="Services\StorageServices\StorageInterfaces\" />
-  </ItemGroup>
-
 </Project>

@@ -13,4 +13,5 @@ public interface IUserService
  Task<(bool IsSuccess, string ErrorMessage, User User)> UpdateUserAsync(User updatedUser);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteUserAsync(int userId);
  Task<(bool IsSuccess, string ErrorMessage, List<User> UserList)> GetAllUsersAsync();
+ Task<(bool IsSuccess, string ErrorMessage, User User)> GetUserByLogin(string login);
 }

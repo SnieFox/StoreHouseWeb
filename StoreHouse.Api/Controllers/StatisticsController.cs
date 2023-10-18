@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StoreHouse.Api.Services.StatisticsServices.StatisticsInterfaces;
-using StoreHouse.Database.Entities;
+using StoreHouse.Api.Services.Interfaces;
 
 namespace StoreHouse.Api.Controllers;
 

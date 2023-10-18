@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using StoreHouse.Api.Model.Extensions;
 using StoreHouse.Api.Model.Mapping;
@@ -9,6 +10,10 @@ using StoreHouse.Database.StoreHouseDbContext;
 var builder = WebApplication.CreateBuilder(args);
 //CORS
 builder.Services.AddCors();
+//Add Authentication 
+builder.Services.AddAuthentication(options =>
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
 //Database Context
 var sqlServerConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbServices(sqlServerConnectionString);
@@ -36,6 +41,8 @@ app.UseCors(b => b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseAuthentication();
 
 app.MapControllers();
 

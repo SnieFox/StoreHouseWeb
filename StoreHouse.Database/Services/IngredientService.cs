@@ -82,7 +82,8 @@ public class IngredientService : IIngredientService
         try
         {
             var ingredients = await _context.Ingredients
-                            .ToListAsync();
+                .Include(c => c.Category)
+                .ToListAsync();
 
             return (true, string.Empty, ingredients);
         }
@@ -90,5 +91,18 @@ public class IngredientService : IIngredientService
         {
             return (false, e.Message, new List<Ingredient>());
         }
+    }
+    
+    //Get PrimeCost by Name
+    public async Task<(bool IsSuccess, string ErrorMessage, decimal PrimeCost)> GetPrimeCostByName(string name)
+    {
+        if (!await _context.Ingredients.AnyAsync(i => i.Name == name))
+            return (false, "No ingredient with this name", -1);
+
+        var primeCost = await _context.Ingredients
+            .Where(i => i.Name == name)
+            .Select(i => i.PrimeCost)
+            .FirstOrDefaultAsync();
+        return (true, string.Empty, primeCost);
     }
 }

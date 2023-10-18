@@ -91,4 +91,18 @@ public class SupplierService : ISupplierService
             return (false, e.Message, new List<Supplier>());
         }
     }
+    
+    //Get SupplierId by Name
+    public async Task<(bool IsSuccess, string ErrorMessage, int Id)> GetIdByName(string name)
+    {
+        if (!await _context.Suppliers.AnyAsync(s => s.Name == name))
+            return (false, "No supplier with this name", -1);
+
+        int id = await _context.Suppliers
+            .Where(s => s.Name == name)
+            .Select(s => s.Id)
+            .FirstOrDefaultAsync();
+
+        return (true, string.Empty, id);
+    }
 }

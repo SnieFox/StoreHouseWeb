@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using StoreHouse.Api.Model.DTO.StatisticsDTO;
-using StoreHouse.Api.Services.StatisticsServices.StatisticsInterfaces;
+using StoreHouse.Api.Services.Interfaces;
 using StoreHouse.Database.Entities;
 using StoreHouse.Database.Services.Interfaces;
 
-namespace StoreHouse.Api.Services.StatisticsServices;
+namespace StoreHouse.Api.Services;
 
 public class StatisticsService : IStatisticsService
 {

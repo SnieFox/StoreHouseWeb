@@ -93,4 +93,13 @@ public class UserService : IUserService
             return (false, e.Message, new List<User>());
         }
     }
+
+    public async Task<(bool IsSuccess, string ErrorMessage, User User)> GetUserByLogin(string login)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.HashedLogin == login);
+        if(user == null)
+            return (false, "There in no user with this login", new User());
+
+        return (true, string.Empty, user);
+    }
 }

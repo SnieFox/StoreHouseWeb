@@ -22,7 +22,7 @@ public class SupplyService : ISupplyService
         {
             await _context.Supplies.AddAsync(supply);
 
-            var updateResult = await SupportingMethodExtension.UpdateRemainsAsync(_context, supply.ProductLists, true);
+            var updateResult = await _context.UpdateRemainsAsync(supply.ProductLists, true);
             if (!updateResult.IsSuccess)
                 return (false, $"Update of Remains Failed. {updateResult.ErrorMessage}", supply);
 
@@ -46,7 +46,6 @@ public class SupplyService : ISupplyService
             if (supply == null) return (false, "Supply does not exist", updatedSupply);
 
             supply.SupplierId = updatedSupply.SupplierId;
-            supply.UserName = updatedSupply.UserName;
             supply.Date = updatedSupply.Date;
             supply.Sum = updatedSupply.Sum;
             supply.Comment = updatedSupply.Comment;
@@ -73,7 +72,7 @@ public class SupplyService : ISupplyService
                             .FirstOrDefaultAsync(c => c.Id == supplyId);
             if (supply == null) return (false, "Supply does not exist");
 
-            var updateResult = await SupportingMethodExtension.UpdateRemainsAsync(_context, supply.ProductLists, false);
+            var updateResult = await _context.UpdateRemainsAsync(supply.ProductLists, false);
             if (!updateResult.IsSuccess) return (false, $"Update of Remains Failed. {updateResult.ErrorMessage}");
 
             _context.Supplies.Remove(supply);
@@ -92,7 +91,10 @@ public class SupplyService : ISupplyService
     {
         try
         {
-            var supplies = await _context.Supplies.ToListAsync();
+            var supplies = await _context.Supplies
+                .Include(c => c.Supplier)
+                .Include(p => p.ProductLists)
+                .ToListAsync();
 
             return (true, string.Empty, supplies);
         }

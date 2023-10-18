@@ -84,7 +84,8 @@ public class ProductService : IProductService
         try
         {
             var products = await _context.Products
-                            .ToListAsync();
+                .Include(c => c.Category)
+                .ToListAsync();
 
             return (true, string.Empty, products);
         }
@@ -108,5 +109,18 @@ public class ProductService : IProductService
         {
             return (false, e.Message, new List<ProductList>());
         }
+    }
+    
+    //Get PrimeCost by Name
+    public async Task<(bool IsSuccess, string ErrorMessage, decimal PrimeCost)> GetPrimeCostByName(string name)
+    {
+        if (!await _context.Ingredients.AnyAsync(i => i.Name == name))
+            return (false, "No product with this name", -1);
+
+        var primeCost = await _context.Products
+            .Where(p => p.Name == name)
+            .Select(p => p.PrimeCost)
+            .FirstOrDefaultAsync();
+        return (true, string.Empty, primeCost);
     }
 }
