@@ -221,9 +221,28 @@ public class StorageService : IStorageService
         return (true, string.Empty);
     }
 
-    public Task<(bool IsSuccess, string ErrorMessage, List<StorageWriteOffResponse> AllriteOffs)> GetAllWriteOffsAsync()
+    public async Task<(bool IsSuccess, string ErrorMessage, List<StorageWriteOffResponse> AllWriteOffs)> GetAllWriteOffsAsync()
     {
-        throw new NotImplementedException();
+        //Get all WriteOffs
+        var writeOffs = await _writeOffService.GetAllWriteOffsAsync();
+        if (!writeOffs.IsSuccess)
+            return (false, writeOffs.ErrorMessage, new List<StorageWriteOffResponse>());
+        
+        //Mapping WriteOff to StorageWriteOffResponse
+        var writeOffMap = _mapper.Map<List<StorageWriteOffResponse>>(writeOffs);
+        if (writeOffMap == null)
+            return (false, "Mapping failed, object is null", new List<StorageWriteOffResponse>());
+        
+        //Change required fields
+        foreach (var writeOffResult in writeOffMap)
+        {
+            foreach (var writeOff in writeOffs.WriteOffList.Where(wr => wr.Id == writeOffResult.Id))
+            {
+                writeOffResult.ProductList = _mapper.Map<List<WriteOffProductListResponse>>(writeOff.ProductLists);
+            }
+        }
+
+        return (true, string.Empty, writeOffMap);
     }
 
     public Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateWriteOffAsync(StorageWriteOffRequest updatedWriteOff)
@@ -236,9 +255,13 @@ public class StorageService : IStorageService
         throw new NotImplementedException();
     }
 
-    public Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffAsync(int supplyId)
+    public async Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffAsync(int writeOffId)
     {
-        throw new NotImplementedException();
+        var deletedWriteOff = await _writeOffService.DeleteWriteOffAsync(writeOffId);
+        if (!deletedWriteOff.IsSuccess)
+            return (false, deletedWriteOff.ErrorMessage);
+
+        return (true, string.Empty);
     }
     
     

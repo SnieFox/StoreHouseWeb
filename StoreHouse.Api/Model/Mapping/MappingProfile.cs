@@ -99,6 +99,28 @@ public class MappingProfile : Profile
                 op => op.MapFrom(srs => srs.Name))
             .ForMember(d => d.Count,
                 op => op.MapFrom(srs => srs.Count));
+
+        this.CreateMap<WriteOff, StorageWriteOffResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Date,
+                op => op.MapFrom(srs => srs.Date))
+            .ForMember(d => d.UserName,
+                op => op.MapFrom(srs => srs.UserName))
+            .ForMember(d => d.Cause,
+                op => op.MapFrom(srs => srs.Cause.Name));
+
+        this.CreateMap<ProductList, WriteOffProductListResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Count,
+                op => op.MapFrom(srs => srs.Count))
+            .ForMember(d => d.Comment,
+                op => op.MapFrom(srs => srs.Comment))
+            .ForMember(d => d.Sum,
+                op => op.MapFrom(srs => srs.Price));
         
 
         #endregion

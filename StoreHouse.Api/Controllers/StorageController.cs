@@ -35,6 +35,17 @@ public class StorageController : Controller
         return Ok(supplies.AllSupplies);
     }
     
+    [HttpGet]
+    [Route("writeoffs")]
+    public async Task<IActionResult> GetAllWriteOffs()
+    {
+        var writeOffs = await _storageService.GetAllWriteOffsAsync();
+        if (!writeOffs.IsSuccess)
+            return BadRequest(writeOffs.ErrorMessage);
+        
+        return Ok(writeOffs.AllWriteOffs);
+    }
+    
     [HttpPut]
     [Route("supply/update")]
     public async Task<IActionResult> UpdateSupply(StorageSupplyRequest updatedSupply)
@@ -84,6 +95,17 @@ public class StorageController : Controller
         var deletedSupply = await _storageService.DeleteSupplyAsync(id);
         if (!deletedSupply.IsSuccess)
             return BadRequest(deletedSupply.ErrorMessage);
+
+        return Ok();
+    }
+    
+    [HttpDelete]
+    [Route("writeoff/delete")]
+    public async Task<IActionResult> DeleteWriteOff(int id)
+    {
+        var deletedWriteOff = await _storageService.DeleteWriteOffAsync(id);
+        if (!deletedWriteOff.IsSuccess)
+            return BadRequest(deletedWriteOff.ErrorMessage);
 
         return Ok();
     }

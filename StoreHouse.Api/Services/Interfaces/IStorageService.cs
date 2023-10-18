@@ -14,7 +14,7 @@ public interface IStorageService
     Task<(bool IsSuccess, string ErrorMessage)> DeleteSupplyAsync(int supplyId);
     
     //CRUD for WriteOffs
-    Task<(bool IsSuccess, string ErrorMessage, List<StorageWriteOffResponse> AllriteOffs)> GetAllWriteOffsAsync();
+    Task<(bool IsSuccess, string ErrorMessage, List<StorageWriteOffResponse> AllWriteOffs)> GetAllWriteOffsAsync();
     Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateWriteOffAsync(StorageWriteOffRequest updatedWriteOff);
     Task<(bool IsSuccess, string ErrorMessage)> AddWriteOffAsync(StorageWriteOffRequest supply);
     Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffAsync(int supplyId);
