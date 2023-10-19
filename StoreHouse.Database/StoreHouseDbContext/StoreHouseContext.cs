@@ -12,7 +12,6 @@ public class StoreHouseContext : DbContext
 
     public virtual DbSet<Client> Clients { get; set; }
     public virtual DbSet<Dish> Dishes { get; set; }
-    public virtual DbSet<DishesCategory> DishesCategories { get; set; }
     public virtual DbSet<Ingredient> Ingredients { get; set; }
     public virtual DbSet<IngredientsCategory> IngredientsCategories { get; set; }
     public virtual DbSet<Product> Products { get; set; }

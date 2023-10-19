@@ -25,7 +25,6 @@ public static class DbServiceCollectionsExtensions
                 b=> b.MigrationsAssembly("StoreHouse.Api")));
 
         services.AddScoped<IClientService, ClientService>();
-        services.AddScoped<IDishCategoryService, DishCategoryService>();
         services.AddScoped<IDishService, DishService>();
         services.AddScoped<IIngredientCategoryService, IngredientCategoryService>();
         services.AddScoped<IIngredientService, IngredientService>();

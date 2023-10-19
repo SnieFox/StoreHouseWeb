@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using StoreHouse.Api.Model.DTO.MenuDTO;
 using StoreHouse.Api.Model.DTO.ProductListDTO;
 using StoreHouse.Api.Model.DTO.StatisticsDTO;
 using StoreHouse.Api.Model.DTO.StorageDTO;
@@ -11,6 +12,7 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         #region Mapping Data for Statistics Service
+        
         this.CreateMap<Client, StatisticsClientResponse>()
             .ForMember(d => d.Id,
                 op => op.MapFrom(srs => srs.Id))
@@ -38,6 +40,7 @@ public class MappingProfile : Profile
                 op => op.MapFrom(srs => srs.UserName))
             .ForMember(d => d.Type,
                 op => op.MapFrom(srs => srs.Type));
+        
         #endregion
 
         #region Mapping Data for Storage Service
@@ -140,6 +143,55 @@ public class MappingProfile : Profile
             .ForMember(d => d.Count,
                 op => op.MapFrom(srs => srs.Count));
 
+        #endregion
+
+        #region Mapping Data for Menu Service
+
+        this.CreateMap<Product, MenuProductResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.ImageId,
+                op => op.MapFrom(srs => srs.ImageId))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Category,
+                op => op.MapFrom(srs => srs.Category.Name))
+            .ForMember(d => d.PrimeCost,
+                op => op.MapFrom(srs => srs.PrimeCost))
+            .ForMember(d => d.Price,
+                op => op.MapFrom(srs => srs.Price));
+
+        this.CreateMap<MenuProductRequest, Product>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.ImageId,
+                op => op.MapFrom(srs => srs.ImageId))
+            .ForMember(d => d.PrimeCost,
+                op => op.MapFrom(srs => srs.PrimeCost))
+            .ForMember(d => d.Price,
+                op => op.MapFrom(srs => srs.Price));
+
+        this.CreateMap<Dish, MenuDishResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.CategoryName,
+                op => op.MapFrom(srs => srs.Category.Name))
+            .ForMember(d => d.Price,
+                op => op.MapFrom(srs => srs.Price));
+
+        this.CreateMap<ProductList, MenuProductListResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Weight,
+                op => op.MapFrom(srs => srs.Count))
+            .ForMember(d => d.PrimeCost,
+                op => op.MapFrom(srs => srs.PrimeCost));
 
         #endregion
 

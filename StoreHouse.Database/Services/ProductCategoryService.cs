@@ -65,4 +65,17 @@ public class ProductCategoryService : IProductCategoryService
             return (false, e.Message, new List<ProductCategory>());
         }
     }
+
+    public async Task<(bool IsSuccess, string ErrorMessage, int CategoryId)> GetCategoryIdByNameAsync(string name)
+    {
+        if (!await _context.ProductCategories.AnyAsync(s => s.Name == name))
+            return (false, "No product category with this name", -1);
+
+        var id = await _context.ProductCategories
+            .Where(s => s.Name == name)
+            .Select(s => s.Id)
+            .FirstOrDefaultAsync();
+
+        return (true, string.Empty, id);
+    }
 }

@@ -7,4 +7,5 @@ public class ProductCategory
     public string? ImageId { get; set; }
 
     public List<Product> Products { get; set; } = new();
+    public List<Dish> Dishes { get; set; } = new();
 }
