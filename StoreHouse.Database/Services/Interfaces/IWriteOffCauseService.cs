@@ -12,4 +12,5 @@ public interface IWriteOffCauseService
  Task<(bool IsSuccess, string ErrorMessage, WriteOffCause WriteOffCause)> CreateWriteOffCauseAsync(WriteOffCause writeOffCause);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffCauseAsync(int writeOffCauseId);
  Task<(bool IsSuccess, string ErrorMessage, List<WriteOffCause> WriteOffCauseList)> GetAllWriteOffCausesAsync();
+ Task<(bool IsSuccess, string ErrorMessage, int Id)> GetIdByName(string name);
 }

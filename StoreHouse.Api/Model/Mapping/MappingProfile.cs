@@ -121,7 +121,25 @@ public class MappingProfile : Profile
                 op => op.MapFrom(srs => srs.Comment))
             .ForMember(d => d.Sum,
                 op => op.MapFrom(srs => srs.Price));
-        
+
+        this.CreateMap<StorageWriteOffRequest, WriteOff>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Date,
+                op => op.MapFrom(srs => srs.Date))
+            .ForMember(d => d.Comment,
+                op => op.MapFrom(srs => srs.Comment));
+
+        this.CreateMap<WriteOffProductListRequest, ProductList>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Comment,
+                op => op.MapFrom(srs => srs.Comment))
+            .ForMember(d => d.Count,
+                op => op.MapFrom(srs => srs.Count));
+
 
         #endregion
 

@@ -66,4 +66,18 @@ public class WriteOffCauseService : IWriteOffCauseService
             return (false, e.Message, new List<WriteOffCause>());
         }
     }
+    
+    //Get WriteOffCategoryId by Name
+    public async Task<(bool IsSuccess, string ErrorMessage, int Id)> GetIdByName(string name)
+    {
+        if (!await _context.WriteOffCauses.AnyAsync(s => s.Name == name))
+            return (false, "No write-off category with this name", -1);
+
+        int id = await _context.WriteOffCauses
+            .Where(s => s.Name == name)
+            .Select(s => s.Id)
+            .FirstOrDefaultAsync();
+
+        return (true, string.Empty, id);
+    }
 }

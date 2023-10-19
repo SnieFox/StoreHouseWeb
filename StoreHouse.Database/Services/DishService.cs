@@ -119,4 +119,20 @@ public class DishService : IDishService
             return (false, e.Message, new List<Dish>());
         }
     }
+    
+    //Get ProductList by Name
+    public async Task<(bool IsSuccess, string ErrorMessage, List<ProductList> ProductList)> GetProductListByName(string name)
+    {
+        if (!await _context.Dishes.AnyAsync(i => i.Name == name))
+            return (false, "No product with this name", new List<ProductList>());
+
+        var productList = await _context.Dishes
+            .Where(p => p.Name == name)
+            .Include(d => d.ProductLists)
+            .FirstOrDefaultAsync();
+        if (productList.ProductLists == null)
+            return (false, "Product List was empty", new List<ProductList>());
+        
+        return (true, string.Empty, productList.ProductLists);
+    }
 }

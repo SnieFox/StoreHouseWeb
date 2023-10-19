@@ -94,4 +94,17 @@ public class SemiProductService : ISemiProductService
             return (false, e.Message, new List<SemiProduct>());
         }
     }
+    
+    //Get PrimeCost by Name
+    public async Task<(bool IsSuccess, string ErrorMessage, decimal PrimeCost)> GetPrimeCostByName(string name)
+    {
+        if (!await _context.SemiProducts.AnyAsync(i => i.Name == name))
+            return (false, "No product with this name", -1);
+
+        var primeCost = await _context.SemiProducts
+            .Where(p => p.Name == name)
+            .Select(p => p.PrimeCost)
+            .FirstOrDefaultAsync();
+        return (true, string.Empty, primeCost);
+    }
 }

@@ -9,7 +9,10 @@ namespace StoreHouse.Api.Services;
 
 public class StorageService : IStorageService
 {
+    private readonly ISemiProductService _semiProductService;
+    private readonly IDishService _dishService;
     private readonly IWriteOffService _writeOffService;
+    private readonly IWriteOffCauseService _writeOffCauseService;
     private readonly ISupplyService _supplyService;
     private readonly IProductService _productService;
     private readonly IIngredientService _ingredientService;
@@ -17,8 +20,11 @@ public class StorageService : IStorageService
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
 
-    public StorageService(IUserService userService, ISupplierService supplierService, IWriteOffService writeOffService, IProductService productService, IIngredientService ingredientService, ISupplyService supplyService, IMapper mapper)
+    public StorageService(IWriteOffCauseService writeOffCauseService, IDishService dishService, ISemiProductService semiProductService, IUserService userService, ISupplierService supplierService, IWriteOffService writeOffService, IProductService productService, IIngredientService ingredientService, ISupplyService supplyService, IMapper mapper)
     {
+        _writeOffCauseService = writeOffCauseService;
+        _dishService = dishService;
+        _semiProductService = semiProductService;
         _userService = userService;
         _supplierService = supplierService;
         _supplyService = supplyService;
@@ -245,14 +251,127 @@ public class StorageService : IStorageService
         return (true, string.Empty, writeOffMap);
     }
 
-    public Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateWriteOffAsync(StorageWriteOffRequest updatedWriteOff)
+    public async Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateWriteOffAsync(StorageWriteOffRequest updatedWriteOff)
     {
-        throw new NotImplementedException();
+        //Mapping StorageWriteOffRequest to WriteOff and WriteOffProductListRequest to ProductList
+        var writeOffMap = _mapper.Map<WriteOff>(updatedWriteOff);
+        if(writeOffMap == null)
+            return (false, "Mapping failed, object is null", -1);
+        var productListMap = _mapper.Map<List<ProductList>>(updatedWriteOff.ProductList);
+        if(productListMap == null)
+            return (false, "Mapping failed, object is null", -1);
+        
+        //Change required fields
+        foreach (var product in productListMap)
+        {
+            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
+            var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name); 
+            var dishProductListResult = await _dishService.GetProductListByName(product.Name); 
+            if (primeCostIngredientResult.IsSuccess)
+            {
+                product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
+            }
+            else if (primeCostProductResult.IsSuccess)
+            {
+                product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
+            }
+            else if (primeCostSemiProductResult.IsSuccess)
+            {
+                product.Price = (decimal)product.Count * primeCostSemiProductResult.PrimeCost;
+            }
+            else if (dishProductListResult.IsSuccess)
+            {
+                decimal sum = 0;
+                foreach (var prod in dishProductListResult.ProductList)
+                {
+                    sum += prod.PrimeCost;
+                }
+                
+                product.Price = (decimal)product.Count * sum;
+            }
+
+            return (false, "There is no Ingredient or Product with this name", -1);
+        }
+        
+        //Get Supplier Id by Name
+        var writeOffCauseIdResult = await _writeOffCauseService.GetIdByName(updatedWriteOff.Cause);
+        if (!writeOffCauseIdResult.IsSuccess)
+            return (false, writeOffCauseIdResult.ErrorMessage, -1);
+
+        writeOffMap.CauseId = writeOffCauseIdResult.Id;
+        
+        //Call the DAL update service
+        var updateWriteOff = await _writeOffService.UpdateWriteOffAsync(writeOffMap);
+        if (!updateWriteOff.IsSuccess)
+            return (false, updateWriteOff.ErrorMessage, -1);
+
+        return (true, string.Empty, updatedWriteOff.Id);
     }
 
-    public Task<(bool IsSuccess, string ErrorMessage)> AddWriteOffAsync(StorageWriteOffRequest supply)
+    public async Task<(bool IsSuccess, string ErrorMessage)> AddWriteOffAsync(StorageWriteOffRequest writeOff, string userLogin)
     {
-        throw new NotImplementedException();
+        //Mapping StorageWriteOffRequest to WriteOff and WriteOffProductListRequest to ProductList
+        var writeOffMap = _mapper.Map<WriteOff>(writeOff);
+        if(writeOffMap == null)
+            return (false, "Mapping failed, object is null");
+        var productListMap = _mapper.Map<List<ProductList>>(writeOff.ProductList);
+        if(productListMap == null)
+            return (false, "Mapping failed, object is null");
+        
+        //Change required fields
+        foreach (var product in productListMap)
+        {
+            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
+            var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name); 
+            var dishProductListResult = await _dishService.GetProductListByName(product.Name); 
+            if (primeCostIngredientResult.IsSuccess)
+            {
+                product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
+            }
+            else if (primeCostProductResult.IsSuccess)
+            {
+                product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
+            }
+            else if (primeCostSemiProductResult.IsSuccess)
+            {
+                product.Price = (decimal)product.Count * primeCostSemiProductResult.PrimeCost;
+            }
+            else if (dishProductListResult.IsSuccess)
+            {
+                decimal sum = 0;
+                foreach (var prod in dishProductListResult.ProductList)
+                {
+                    sum += prod.PrimeCost;
+                }
+                
+                product.Price = (decimal)product.Count * sum;
+            }
+
+            return (false, "There is no Ingredient or Product with this name");
+        }
+        
+        //Get Write Off Cause Id by Name
+        var writeOffCauseIdResult = await _writeOffCauseService.GetIdByName(writeOff.Cause);
+        if (!writeOffCauseIdResult.IsSuccess)
+            return (false, writeOffCauseIdResult.ErrorMessage);
+
+        //Get User by Login
+        var user = await _userService.GetUserByLogin(userLogin);
+        if (!user.IsSuccess)
+            return (false, user.ErrorMessage);
+        //Change required properties
+        writeOffMap.UserId = user.User.Id;
+        writeOffMap.UserName = user.User.FullName;
+        writeOffMap.CauseId = writeOffCauseIdResult.Id;
+        
+        //Call the DAL update service
+        var updateWriteOff = await _writeOffService.UpdateWriteOffAsync(writeOffMap);
+        if (!updateWriteOff.IsSuccess)
+            return (false, updateWriteOff.ErrorMessage);
+
+        return (true, string.Empty);
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffAsync(int writeOffId)

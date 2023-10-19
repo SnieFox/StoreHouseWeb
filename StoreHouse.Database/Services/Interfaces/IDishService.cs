@@ -13,4 +13,5 @@ public interface IDishService
     Task<(bool IsSuccess, string ErrorMessage, Dish UpdatedDish)> UpdateDishAsync(Dish updatedDish);
     Task<(bool IsSuccess, string ErrorMessage)> DeleteDishAsync(int dishId);
     Task<(bool IsSuccess, string ErrorMessage, List<Dish> DishList)> GetAllDishesAsync();
+    Task<(bool IsSuccess, string ErrorMessage, List<ProductList> ProductList)> GetProductListByName(string name);
 }

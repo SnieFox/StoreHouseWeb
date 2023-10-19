@@ -65,6 +65,26 @@ public class StorageController : Controller
 
         return Ok(updatedSupplyResult.UpdatedId);
     }
+    
+    [HttpPut]
+    [Route("writeoff/update")]
+    public async Task<IActionResult> UpdateWriteOff(StorageWriteOffRequest updatedWriteOff)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errorMessages = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(errorMessages);
+        }
+
+        var updatedWriteOffResult = await _storageService.UpdateWriteOffAsync(updatedWriteOff);
+        if (!updatedWriteOffResult.IsSuccess)
+            return BadRequest(updatedWriteOffResult.ErrorMessage);
+
+        return Ok(updatedWriteOffResult.UpdatedId);
+    }
 
     [HttpPost]
     [Route("supply/create")]
@@ -84,6 +104,28 @@ public class StorageController : Controller
         var addSupplyResult = await _storageService.AddSupplyAsync(updatedSupply, userLogin);
         if (!addSupplyResult.IsSuccess)
             return BadRequest(addSupplyResult.ErrorMessage);
+
+        return Ok();
+    }
+    
+    [HttpPost]
+    [Route("writeoff/create")]
+    public async Task<IActionResult> AddWriteOff(StorageWriteOffRequest updatedWriteOff)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errorMessages = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(errorMessages);
+        }
+
+        string userLogin = HttpContext.User.Identity.Name;
+
+        var addWriteOffResult = await _storageService.AddWriteOffAsync(updatedWriteOff, userLogin);
+        if (!addWriteOffResult.IsSuccess)
+            return BadRequest(addWriteOffResult.ErrorMessage);
 
         return Ok();
     }

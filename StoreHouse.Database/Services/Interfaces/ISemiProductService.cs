@@ -13,4 +13,5 @@ public interface ISemiProductService
  Task<(bool IsSuccess, string ErrorMessage, SemiProduct SemiProduct)> UpdateSemiProductAsync(SemiProduct updatedSemiProduct);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteSemiProductAsync(int semiProductId);
  Task<(bool IsSuccess, string ErrorMessage, List<SemiProduct> SemiProductList)> GetAllSemiProductsAsync();
+ Task<(bool IsSuccess, string ErrorMessage, decimal PrimeCost)> GetPrimeCostByName(string name);
 }
