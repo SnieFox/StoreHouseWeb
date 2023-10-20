@@ -107,7 +107,7 @@ public class StoreHouseContext : DbContext
 
             entity.Property(e => e.Email);
             entity.Property(e => e.FullName);
-            entity.Property(e => e.HashedLogin);
+            entity.Property(e => e.Login);
             entity.Property(e => e.HashedPassword);
             entity.Property(e => e.PinCode);
             entity.Property(e => e.LastLoginDate);

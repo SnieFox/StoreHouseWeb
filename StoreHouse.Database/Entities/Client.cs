@@ -9,6 +9,8 @@ public class Client
     public string BankCard { get; set; } = string.Empty;
     public string MobilePhone { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
+    public string Comment { get; set; } = string.Empty;
+    public string Address { get; set; } = string.Empty;
 
     public List<Receipt> Receipts { get; set; } = new();
 }

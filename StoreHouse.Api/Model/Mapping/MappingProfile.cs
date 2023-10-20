@@ -1,6 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
 using AutoMapper;
 using Castle.Components.DictionaryAdapter.Xml;
+using StoreHouse.Api.Model.DTO.CheckoutDTO;
+using StoreHouse.Api.Model.DTO.DishListDTO;
+using StoreHouse.Api.Model.DTO.ManageDTO;
 using StoreHouse.Api.Model.DTO.MenuDTO;
 using StoreHouse.Api.Model.DTO.ProductListDTO;
 using StoreHouse.Api.Model.DTO.StatisticsDTO;
@@ -291,5 +294,188 @@ public class MappingProfile : Profile
 
         #endregion
 
+        #region Mapping Data for Manage Service
+
+        this.CreateMap<Client, ManageClientResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.FullName,
+                op => op.MapFrom(srs => srs.FullName))
+            .ForMember(d => d.BankCard,
+                op => op.MapFrom(srs => srs.BankCard))
+            .ForMember(d => d.MobilePhone,
+                op => op.MapFrom(srs => srs.MobilePhone));
+
+        this.CreateMap<ManageClientRequest, Client>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.FullName,
+                op => op.MapFrom(srs => srs.FullName))
+            .ForMember(d => d.BankCard,
+                op => op.MapFrom(srs => srs.BankCard))
+            .ForMember(d => d.MobilePhone,
+                op => op.MapFrom(srs => srs.MobilePhone))
+            .ForMember(d => d.Email,
+                op => op.MapFrom(srs => srs.Email))
+            .ForMember(d => d.Comment,
+                op => op.MapFrom(srs => srs.Comment))
+            .ForMember(d => d.Address,
+                op => op.MapFrom(srs => srs.Address));
+
+        this.CreateMap<User, ManageUserResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.FullName))
+            .ForMember(d => d.Login,
+                op => op.MapFrom(srs => srs.Login))
+            .ForMember(d => d.PinCode,
+                op => op.MapFrom(srs => srs.PinCode))
+            .ForMember(d => d.RoleName,
+                op => op.MapFrom(srs => srs.Role.Name))
+            .ForMember(d => d.LastLoginDate,
+                op => op.MapFrom(srs => srs.LastLoginDate));
+
+        this.CreateMap<ManageUserRequest, User>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.FullName,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Login,
+                op => op.MapFrom(srs => srs.Login))
+            .ForMember(d => d.Email,
+                op => op.MapFrom(srs => srs.Email))
+            .ForMember(d => d.MobilePhone,
+                op => op.MapFrom(srs => srs.MobilePhone))
+            .ForMember(d => d.PinCode,
+                op => op.MapFrom(srs => srs.PinCode));
+
+        this.CreateMap<Role, ManageRoleResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name));
+
+        this.CreateMap<ManageRoleRequest, Role>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name));
+
+        #endregion
+
+        #region MyRegion
+
+        this.CreateMap<ProductCategory, CheckoutProductCategoryResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.ImageId,
+                op => op.MapFrom(srs => srs.ImageId));
+
+        this.CreateMap<Dish, DishListResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.ImageId,
+                op => op.MapFrom(srs => srs.ImageId))
+            .ForMember(d => d.Price,
+                op => op.MapFrom(srs => srs.Price));
+
+        this.CreateMap<Product, DishListResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Price,
+                op => op.MapFrom(srs => srs.Price))
+            .ForMember(d => d.ImageId,
+                op => op.MapFrom(srs => srs.ImageId));
+
+        this.CreateMap<Client, CheckoutClientResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.FullName,
+                op => op.MapFrom(srs => srs.FullName))
+            .ForMember(d => d.Sex,
+                op => op.MapFrom(srs => srs.Sex))
+            .ForMember(d => d.BankCard,
+                op => op.MapFrom(srs => srs.BankCard))
+            .ForMember(d => d.MobilePhone,
+                op => op.MapFrom(srs => srs.MobilePhone));
+
+        this.CreateMap<CheckoutClientRequest, Client>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.FullName,
+                op => op.MapFrom(srs => srs.FullName))
+            .ForMember(d => d.Sex,
+                op => op.MapFrom(srs => srs.Sex))
+            .ForMember(d => d.BirthDate,
+                op => op.MapFrom(srs => srs.BirthDate))
+            .ForMember(d => d.BankCard,
+                op => op.MapFrom(srs => srs.BankCard))
+            .ForMember(d => d.MobilePhone,
+                op => op.MapFrom(srs => srs.MobilePhone))
+            .ForMember(d => d.Email,
+                op => op.MapFrom(srs => srs.Email))
+            .ForMember(d => d.Comment,
+                op => op.MapFrom(srs => srs.Comment))
+            .ForMember(d => d.Address,
+                op => op.MapFrom(srs => srs.Address));
+
+        this.CreateMap<Receipt, CheckoutReceiptResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Type,
+                op => op.MapFrom(srs => srs.Type))
+            .ForMember(d => d.UserName,
+                op => op.MapFrom(srs => srs.UserName))
+            .ForMember(d => d.ClientName,
+                op => op.MapFrom(srs => srs.ClientName))
+            .ForMember(d => d.OpenDate,
+                op => op.MapFrom(srs => srs.OpenDate))
+            .ForMember(d => d.CloseDate,
+                op => op.MapFrom(srs => srs.CloseDate));
+
+        this.CreateMap<ProductList, ReceiptProductListResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Count,
+                op => op.MapFrom(srs => srs.Count))
+            .ForMember(d => d.Price,
+                op => op.MapFrom(srs => srs.Price));
+
+        this.CreateMap<CheckoutReceiptRequest, Receipt>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Type,
+                op => op.MapFrom(srs => srs.Type))
+            .ForMember(d => d.UserName,
+                op => op.MapFrom(srs => srs.UserName))
+            .ForMember(d => d.ClientName,
+                op => op.MapFrom(srs => srs.ClientName))
+            .ForMember(d => d.OpenDate,
+                op => op.MapFrom(srs => srs.OpenDate))
+            .ForMember(d => d.CloseDate,
+                op => op.MapFrom(srs => srs.CloseDate))
+            .ForMember(d => d.ClientId,
+                op => op.MapFrom(srs => srs.ClientId));
+
+        this.CreateMap<ReceiptProductListRequest, ProductList>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Count,
+                op => op.MapFrom(srs => srs.Count))
+            .ForMember(d => d.Price,
+                op => op.MapFrom(srs => srs.Price));
+
+        #endregion
     }
 }

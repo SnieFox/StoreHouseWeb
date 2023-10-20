@@ -67,4 +67,17 @@ public class RoleService : IRoleService
             return (false, e.Message, new List<Role>());
         }
     }
+    
+    public async Task<(bool IsSuccess, string ErrorMessage, int RoleId)> GetRoleIdByName(string name)
+    {
+        if (!await _context.Roles.AnyAsync(s => s.Name == name))
+            return (false, "No role with this name", -1);
+        
+        var roleId = await _context.Roles
+            .Where(c => c.Name == name)
+            .Select(c => c.Id)
+            .FirstOrDefaultAsync();
+        
+        return (true, string.Empty, roleId);
+    }
 }

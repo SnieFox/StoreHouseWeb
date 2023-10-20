@@ -14,8 +14,8 @@ public class ManageUserRequest
     public string Login { get; set; }
     [EmailAddress]
     public string Email { get; set; }
-    [Required]
-    public string Password { get; set; }
+    
+    public string? Password { get; set; }
     [Required]
     [Phone]
     public string MobilePhone { get; set; }

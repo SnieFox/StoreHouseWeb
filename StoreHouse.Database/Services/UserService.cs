@@ -40,8 +40,7 @@ public class UserService : IUserService
 
             user.RoleId = updatedUser.RoleId;
             user.FullName = updatedUser.FullName;
-            user.HashedLogin = updatedUser.HashedLogin;
-            user.HashedPassword = updatedUser.HashedPassword;
+            user.Login = updatedUser.Login;
             user.FullName = updatedUser.FullName;
             user.LastLoginDate = updatedUser.LastLoginDate;
             user.PinCode = updatedUser.PinCode;
@@ -96,7 +95,7 @@ public class UserService : IUserService
 
     public async Task<(bool IsSuccess, string ErrorMessage, User User)> GetUserByLogin(string login)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.HashedLogin == login);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Login == login);
         if(user == null)
             return (false, "There in no user with this login", new User());
 

@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
 using StoreHouse.Api.Model.Extensions;
 using StoreHouse.Api.Model.Mapping;
 using StoreHouse.Database.Extensions;
-using StoreHouse.Database.Services;
-using StoreHouse.Database.Services.Interfaces;
-using StoreHouse.Database.StoreHouseDbContext;
 
 var builder = WebApplication.CreateBuilder(args);
 //CORS

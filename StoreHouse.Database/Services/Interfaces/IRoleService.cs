@@ -12,4 +12,5 @@ public interface IRoleService
  Task<(bool IsSuccess, string ErrorMessage, Role Role)> CreateRoleAsync(Role role);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteRoleAsync(int roleId);
  Task<(bool IsSuccess, string ErrorMessage, List<Role> RoleList)> GetAllRolesAsync();
+ Task<(bool IsSuccess, string ErrorMessage, int RoleId)> GetRoleIdByName(string name);
 }
