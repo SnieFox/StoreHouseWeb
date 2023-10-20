@@ -14,4 +14,5 @@ public interface IIngredientService
  Task<(bool IsSuccess, string ErrorMessage)> DeleteIngredientAsync(int ingredientId);
  Task<(bool IsSuccess, string ErrorMessage, List<Ingredient> IngredientList)> GetAllIngredientsAsync();
  Task<(bool IsSuccess, string ErrorMessage, decimal PrimeCost)> GetPrimeCostByName(string name);
+ Task<(bool IsSuccess, string ErrorMessage, List<(int Id, string Name, double Weight, decimal PrimeCost)> SemiProducts)> GetRelatedSemiProductsAsync(Ingredient ingredient);
 }

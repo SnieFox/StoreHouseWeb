@@ -12,4 +12,5 @@ public interface IIngredientCategoryService
  Task<(bool IsSuccess, string ErrorMessage, IngredientsCategory IngredientsCategory)> CreateIngredientCategoryAsync(IngredientsCategory ingredientCategory);
  Task<(bool IsSuccess, string ErrorMessage)> DeleteIngredientCategoryAsync(int ingredientCategoryId);
  Task<(bool IsSuccess, string ErrorMessage, List<IngredientsCategory> IngredientCategoryList)> GetAllIngredientCategoriesAsync();
+ Task<(bool IsSuccess, string ErrorMessage, int CategoryId)> GetCategoryIdByName(string name);
 }

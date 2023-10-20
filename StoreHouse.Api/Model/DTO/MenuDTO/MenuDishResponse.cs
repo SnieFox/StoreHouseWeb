@@ -10,5 +10,6 @@ public class MenuDishResponse
     public double Weight { get; set; }
     public decimal PrimeCost { get; set; }
     public decimal Price { get; set; }
+    public string ImageId { get; set; }
     public List<MenuProductListResponse> ProductList { get; set; }
 }

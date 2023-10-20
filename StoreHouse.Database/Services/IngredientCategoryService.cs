@@ -66,4 +66,17 @@ public class IngredientCategoryService : IIngredientCategoryService
             return (false, e.Message, new List<IngredientsCategory>());
         }
     }
+
+    public async Task<(bool IsSuccess, string ErrorMessage, int CategoryId)> GetCategoryIdByName(string name)
+    {
+        if (!await _context.IngredientsCategories.AnyAsync(s => s.Name == name))
+            return (false, "No product category with this name", -1);
+        
+        var categoryId = await _context.IngredientsCategories
+            .Where(c => c.Name == name)
+            .Select(c => c.Id)
+            .FirstOrDefaultAsync();
+        
+        return (true, string.Empty, categoryId);
+    }
 }

@@ -12,9 +12,7 @@ public class MenuDishRequest
     [Required]
     public string CategoryName { get; set; }
     [Required]
-    public double Weight { get; set; }
-    [Required]
-    public decimal PrimeCost { get; set; }
+    public string ImageId { get; set; }
     [Required]
     public decimal Price { get; set; }
     [Required]

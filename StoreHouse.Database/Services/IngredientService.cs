@@ -105,4 +105,24 @@ public class IngredientService : IIngredientService
             .FirstOrDefaultAsync();
         return (true, string.Empty, primeCost);
     }
+
+    public async Task<(bool IsSuccess, string ErrorMessage, List<(int Id, string Name, double Weight, decimal PrimeCost)> SemiProducts)> GetRelatedSemiProductsAsync(
+        Ingredient ingredient)
+    {
+        var semiProductResponse = new List<(int Id, string Name, double Weight, decimal PrimeCost)>();
+
+        var productLists = await _context.ProductLists
+            .Where(p => p.SemiProductId != 0 && p.Name == ingredient.Name)
+            .ToListAsync();
+
+        foreach (var product in productLists)
+        {
+            var semiProduct = await _context.SemiProducts
+                .Where(s => s.Id == product.Id).FirstOrDefaultAsync();
+            
+            semiProductResponse.Add((semiProduct.Id, semiProduct.Name, product.Count, product.PrimeCost));
+        }
+
+        return (true, string.Empty, semiProductResponse);
+    }
 }

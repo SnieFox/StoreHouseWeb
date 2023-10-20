@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Runtime.CompilerServices;
+using AutoMapper;
+using Castle.Components.DictionaryAdapter.Xml;
 using StoreHouse.Api.Model.DTO.MenuDTO;
 using StoreHouse.Api.Model.DTO.ProductListDTO;
 using StoreHouse.Api.Model.DTO.StatisticsDTO;
@@ -181,7 +183,9 @@ public class MappingProfile : Profile
             .ForMember(d => d.CategoryName,
                 op => op.MapFrom(srs => srs.Category.Name))
             .ForMember(d => d.Price,
-                op => op.MapFrom(srs => srs.Price));
+                op => op.MapFrom(srs => srs.Price))
+            .ForMember(d => d.ImageId,
+                op => op.MapFrom(srs => srs.ImageId));
 
         this.CreateMap<ProductList, MenuProductListResponse>()
             .ForMember(d => d.Id,
@@ -192,6 +196,98 @@ public class MappingProfile : Profile
                 op => op.MapFrom(srs => srs.Count))
             .ForMember(d => d.PrimeCost,
                 op => op.MapFrom(srs => srs.PrimeCost));
+
+        this.CreateMap<MenuDishRequest, Dish>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Price,
+                op => op.MapFrom(srs => srs.Price))
+            .ForMember(d => d.ImageId,
+                op => op.MapFrom(srs => srs.ImageId));
+
+        this.CreateMap<MenuProductListRequest, ProductList>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Count,
+                op => op.MapFrom(srs => srs.Weight));
+
+        this.CreateMap<SemiProduct, MenuSemiProductResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Weight,
+                op => op.MapFrom(srs => srs.Output))
+            .ForMember(d => d.PrimeCost,
+                op => op.MapFrom(srs => srs.PrimeCost))
+            .ForMember(d => d.Comment,
+                op => op.MapFrom(srs => srs.Prescription));
+
+        this.CreateMap<MenuSemiProductRequest, SemiProduct>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Prescription,
+                op => op.MapFrom(srs => srs.Comment));
+
+        this.CreateMap<Ingredient, MenuIngredientResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.CategoryName,
+                op => op.MapFrom(srs => srs.Category.Name))
+            .ForMember(d => d.Unit,
+                op => op.MapFrom(srs => srs.Unit))
+            .ForMember(d => d.Remains,
+                op => op.MapFrom(srs => srs.Remains))
+            .ForMember(d => d.PrimeCost,
+                op => op.MapFrom(srs => srs.PrimeCost));
+
+        this.CreateMap<MenuIngredientUpdateRequest, Ingredient>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name));
+
+        this.CreateMap<MenuIngredientAddRequest, Ingredient>()
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Unit,
+                op => op.MapFrom(srs => srs.Unit))
+            .ForMember(d => d.Remains,
+                op => op.MapFrom(srs => srs.Remains))
+            .ForMember(d => d.PrimeCost,
+                op => op.MapFrom(srs => srs.PrimeCost));
+
+        this.CreateMap<ProductCategory, MenuProductCategoryResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.ImageId,
+                op => op.MapFrom(srs => srs.ImageId));
+
+        this.CreateMap<MenuProductCategoryRequest, ProductCategory>()
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.ImageId,
+                op => op.MapFrom(srs => srs.ImageId));
+
+        this.CreateMap<IngredientsCategory, MenuIngredientCategoryResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name));
+
+        this.CreateMap<MenuIngredientCategoryRequest, IngredientsCategory>()
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name));
 
         #endregion
 

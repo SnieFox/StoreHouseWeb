@@ -24,8 +24,8 @@ public interface IMenuService
     
     //CRUD for Ingredient
     Task<(bool IsSuccess, string ErrorMessage, List<MenuIngredientResponse> AllIngredients)> GetAllIngredientsAsync();
-    Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateIngredientAsync(MenuIngredientAddRequest updatedIngredient);
-    Task<(bool IsSuccess, string ErrorMessage)> AddIngredientAsync(MenuIngredientUpdateRequest ingredient);
+    Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateIngredientAsync(MenuIngredientUpdateRequest updatedIngredient);
+    Task<(bool IsSuccess, string ErrorMessage)> AddIngredientAsync(MenuIngredientAddRequest ingredient);
     Task<(bool IsSuccess, string ErrorMessage)> DeleteIngredientAsync(int ingredientId);
     
     //CRUD for ProductCategory
