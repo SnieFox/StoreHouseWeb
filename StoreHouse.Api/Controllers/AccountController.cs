@@ -9,12 +9,15 @@ using StoreHouse.Api.Services.Interfaces;
 
 namespace StoreHouse.Api.Controllers;
 
+[ApiController]
+[Route($"account")]
 public class AccountController : Controller
 {
     private readonly IAccountService _accountService;
     public AccountController(IAccountService accountService) => _accountService = accountService;
     
     [HttpGet]
+    [Route("login")]
     public async Task<IActionResult> Login(LoginDataRequest loginData)
     {
         var loginUser = await _accountService.LoginUser(loginData);
@@ -34,6 +37,7 @@ public class AccountController : Controller
     
     [Authorize]
     [HttpGet]
+    [Route("logout")]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
