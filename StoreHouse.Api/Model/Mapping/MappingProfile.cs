@@ -357,8 +357,6 @@ public class MappingProfile : Profile
                 op => op.MapFrom(srs => srs.Name));
 
         this.CreateMap<ManageRoleRequest, Role>()
-            .ForMember(d => d.Id,
-                op => op.MapFrom(srs => srs.Id))
             .ForMember(d => d.Name,
                 op => op.MapFrom(srs => srs.Name));
 

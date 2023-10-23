@@ -41,7 +41,6 @@ public class UserService : IUserService
             user.RoleId = updatedUser.RoleId;
             user.FullName = updatedUser.FullName;
             user.Login = updatedUser.Login;
-            user.FullName = updatedUser.FullName;
             user.LastLoginDate = updatedUser.LastLoginDate;
             user.PinCode = updatedUser.PinCode;
             user.Email = updatedUser.Email;
@@ -83,7 +82,9 @@ public class UserService : IUserService
     {
         try
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _context.Users
+                .Include(u => u.Role)
+                .ToListAsync();
 
             return (true, string.Empty, users);
         }

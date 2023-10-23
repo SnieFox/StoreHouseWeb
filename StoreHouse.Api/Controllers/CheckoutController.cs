@@ -7,7 +7,7 @@ namespace StoreHouse.Api.Controllers;
 
 [ApiController]
 [Route($"checkout")]
-[Authorize]
+//[Authorize]
 public class CheckoutController : Controller
 {
     private readonly ICheckoutService _checkoutService;

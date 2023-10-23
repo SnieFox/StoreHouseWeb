@@ -46,6 +46,7 @@ public class ClientService : IClientService
             client.BankCard = updatedClient.BankCard;
             client.FullName = updatedClient.FullName;
             client.MobilePhone = updatedClient.MobilePhone;
+            client.Comment = updatedClient.Comment;
             var saved = await _context.SaveChangesAsync();
 
             return saved == 0
@@ -89,6 +90,8 @@ public class ClientService : IClientService
                 .Include(c => c.Receipts)
                 .ThenInclude(p => p.ProductLists)
                 .ToListAsync();
+            if (clients.Count == 0)
+                return (false, "Client List was empty", new List<Client>());
 
             return (true, string.Empty, clients);
         }

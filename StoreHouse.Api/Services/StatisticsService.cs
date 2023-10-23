@@ -33,7 +33,7 @@ public class StatisticsService : IStatisticsService
                 return (false, clients.ErrorMessage, new List<StatisticsClientResponse>());
 
             //AutoMap Clients to StatisticsClientResponse
-            var allClientsResponse = _mapper.Map<List<StatisticsClientResponse>>(clients);
+            var allClientsResponse = _mapper.Map<List<StatisticsClientResponse>>(clients.ClientList);
             if (allClientsResponse == null)
                 return (false, "Mapping failed, object is null", new List<StatisticsClientResponse>());
 
@@ -80,7 +80,7 @@ public class StatisticsService : IStatisticsService
             if (!employees.IsSuccess) return (false, employees.ErrorMessage, new List<StatisticsEmployeeResponse>());
 
             //AutoMap Employees to StatisticsEmployeeResponse
-            var allEmployeesResponse = _mapper.Map<List<StatisticsEmployeeResponse>>(employees);
+            var allEmployeesResponse = _mapper.Map<List<StatisticsEmployeeResponse>>(employees.UserList);
             if (allEmployeesResponse == null)
                 return (false, "Mapping failed, object is null", new List<StatisticsEmployeeResponse>());
 

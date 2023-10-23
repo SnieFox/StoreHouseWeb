@@ -30,7 +30,7 @@ public class ManageService : IManageService
             return (false, clients.ErrorMessage, new List<ManageClientResponse>());
         
         //Map Clients
-        var clientsMap = _mapper.Map<List<ManageClientResponse>>(clients);
+        var clientsMap = _mapper.Map<List<ManageClientResponse>>(clients.ClientList);
         if (clientsMap == null)
             return (false, "Mapping failed, object was null", new List<ManageClientResponse>());
         
@@ -103,7 +103,7 @@ public class ManageService : IManageService
             return (false, users.ErrorMessage, new List<ManageUserResponse>());
         
         //Map Users
-        var usersMap = _mapper.Map<List<ManageUserResponse>>(users);
+        var usersMap = _mapper.Map<List<ManageUserResponse>>(users.UserList);
         if (usersMap == null)
             return (false, "Mapping failed, object was null", new List<ManageUserResponse>());
 
@@ -149,9 +149,9 @@ public class ManageService : IManageService
             userMap.HashedPassword = HashPassword(user.Password);
         
         //Call the DAL update service
-        var updateUser = await _userService.UpdateUserAsync(userMap);
-        if (!updateUser.IsSuccess)
-            return (false, updateUser.ErrorMessage);
+        var addUser = await _userService.CreateUserAsync(userMap);
+        if (!addUser.IsSuccess)
+            return (false, addUser.ErrorMessage);
 
         return (true, string.Empty);
     }
@@ -173,7 +173,7 @@ public class ManageService : IManageService
             return (false, roles.ErrorMessage, new List<ManageRoleResponse>());
         
         //Map Roles
-        var rolesMap = _mapper.Map<List<ManageRoleResponse>>(roles);
+        var rolesMap = _mapper.Map<List<ManageRoleResponse>>(roles.RoleList);
         if (rolesMap == null)
             return (false, "Mapping failed, object was null", new List<ManageRoleResponse>());
 

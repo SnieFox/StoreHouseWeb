@@ -12,8 +12,8 @@ using StoreHouse.Database.StoreHouseDbContext;
 namespace StoreHouse.Api.Migrations
 {
     [DbContext(typeof(StoreHouseContext))]
-    [Migration("20231009121941_Initiall")]
-    partial class Initiall
+    [Migration("20231023105051_InitialM")]
+    partial class InitialM
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,12 +33,20 @@ namespace StoreHouse.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("BankCard")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("BirthDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -72,6 +80,10 @@ namespace StoreHouse.Api.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("ImageId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -84,26 +96,6 @@ namespace StoreHouse.Api.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Dish", (string)null);
-                });
-
-            modelBuilder.Entity("StoreHouse.Database.Entities.DishesCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ImageId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DishesCategories");
                 });
 
             modelBuilder.Entity("StoreHouse.Database.Entities.Ingredient", b =>
@@ -234,6 +226,9 @@ namespace StoreHouse.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
                     b.Property<decimal>("PrimeCost")
                         .HasColumnType("numeric");
 
@@ -242,9 +237,6 @@ namespace StoreHouse.Api.Migrations
 
                     b.Property<int?>("SemiProductId")
                         .HasColumnType("integer");
-
-                    b.Property<decimal>("Sum")
-                        .HasColumnType("numeric");
 
                     b.Property<int?>("SupplyId")
                         .HasColumnType("integer");
@@ -430,16 +422,20 @@ namespace StoreHouse.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("HashedLogin")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("HashedPassword")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LastLoginDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("MobilePhone")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("PinCode")
                         .HasColumnType("integer");
@@ -507,7 +503,7 @@ namespace StoreHouse.Api.Migrations
 
             modelBuilder.Entity("StoreHouse.Database.Entities.Dish", b =>
                 {
-                    b.HasOne("StoreHouse.Database.Entities.DishesCategory", "Category")
+                    b.HasOne("StoreHouse.Database.Entities.ProductCategory", "Category")
                         .WithMany("Dishes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -640,11 +636,6 @@ namespace StoreHouse.Api.Migrations
                     b.Navigation("ProductLists");
                 });
 
-            modelBuilder.Entity("StoreHouse.Database.Entities.DishesCategory", b =>
-                {
-                    b.Navigation("Dishes");
-                });
-
             modelBuilder.Entity("StoreHouse.Database.Entities.IngredientsCategory", b =>
                 {
                     b.Navigation("Ingredients");
@@ -652,6 +643,8 @@ namespace StoreHouse.Api.Migrations
 
             modelBuilder.Entity("StoreHouse.Database.Entities.ProductCategory", b =>
                 {
+                    b.Navigation("Dishes");
+
                     b.Navigation("Products");
                 });
 
