@@ -27,33 +27,22 @@ public class AccountController : Controller
         var loginUser = await _accountService.LoginUser(loginData);
         if (!loginUser.IsSuccess)
             return BadRequest(loginUser.ErrorMessage);
-
-        var token = GenerateJwtToken(loginUser.User, "http://localhost:5211", "http://localhost:5211");
-
-        return Ok(new { Token = token, User = loginUser.User });
-    }
-
-    private string GenerateJwtToken(ManageUserResponse user, string validIssuer, string validAudience)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes("your_secret_key");
-
-        var tokenDescriptor = new SecurityTokenDescriptor
+        
+        var claims = new List<Claim>
         {
-            Subject = new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, user.Login),
-                new Claim(ClaimTypes.Role, user.RoleName)
-                // Добавьте другие нужные вам клеймы
-            }),
-            Expires = DateTime.UtcNow.AddHours(1), // Время жизни токена
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-            Issuer = validIssuer, // Добавлено
-            Audience = validAudience // Добавлено
+            new Claim(ClaimTypes.Name, loginUser.User.Login),
+            new Claim(ClaimTypes.Role, loginUser.User.RoleName)
         };
+        // создаем JWT-токен
+        var jwt = new JwtSecurityToken(
+            issuer: "MyServer",
+            audience: "MyClient",
+            claims: claims,
+            expires: DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("keykeykeykeykeykeykeykeykeykey")), SecurityAlgorithms.HmacSha256));
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        string token = new JwtSecurityTokenHandler().WriteToken(jwt);
+        return Ok(new {loginUser.User, token});
     }
     
     [Authorize]
