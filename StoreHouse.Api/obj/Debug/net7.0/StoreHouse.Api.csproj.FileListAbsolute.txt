@@ -94,3 +94,10 @@ C:\Users\Xiaomi\OneDrive - Київський національний торг�
 C:\Users\Xiaomi\OneDrive - Київський національний торговельно-економічний університет\Робочий стіл\Prog\StoreHouseWeb\StoreHouse.Api\obj\Debug\net7.0\ref\StoreHouse.Api.dll
 C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Api\bin\Debug\net7.0\AutoMapper.dll
 C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Api\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Api\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Api\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Api\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Api\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Api\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Api\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\Roflokektikpukpek\Desktop\.net learn\StoreHouseWeb\StoreHouse.Api\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll

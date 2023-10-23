@@ -1,4 +1,7 @@
+using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using StoreHouse.Api.Model.Extensions;
 using StoreHouse.Api.Model.Mapping;
 using StoreHouse.Database.Extensions;
@@ -7,9 +10,20 @@ var builder = WebApplication.CreateBuilder(args);
 //CORS
 builder.Services.AddCors();
 //Add Authentication 
-builder.Services.AddAuthentication(options =>
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "http://localhost:5211",
+            ValidAudience = "http://localhost:5211",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ABCDEF"))
+        };
+    });
 //Database Context
 var sqlServerConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbServices(sqlServerConnectionString);

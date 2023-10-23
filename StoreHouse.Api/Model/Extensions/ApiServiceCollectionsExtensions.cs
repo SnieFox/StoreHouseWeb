@@ -17,6 +17,7 @@ public static class ApiServiceCollectionsExtensions
         services.AddScoped<IMenuService, MenuService>();
         services.AddScoped<IManageService, ManageService>();
         services.AddScoped<ICheckoutService, CheckoutService>();
+        services.AddScoped<IAccountService, AccountService>();
 
         return services;
     }
