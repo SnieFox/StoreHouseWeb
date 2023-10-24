@@ -7,5 +7,5 @@ public class Supplier
     public string MobilePhone { get; set; } = string.Empty;
     public string Comment { get; set; } = string.Empty;
 
-    public List<Supply> Supplies { get; set; } = new();
+    public List<Supply>? Supplies { get; set; }
 }

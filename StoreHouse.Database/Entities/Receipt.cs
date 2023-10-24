@@ -13,5 +13,5 @@ public class Receipt
 
     public Client? Client { get; set; }
     public User? User { get; set; }
-    public List<ProductList> ProductLists { get; set; } = new();
+    public List<ProductList>? ProductLists { get; set; }
 }

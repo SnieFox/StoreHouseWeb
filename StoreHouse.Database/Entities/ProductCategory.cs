@@ -6,6 +6,6 @@ public class ProductCategory
     public string Name { get; set; } = string.Empty;
     public string? ImageId { get; set; }
 
-    public List<Product> Products { get; set; } = new();
-    public List<Dish> Dishes { get; set; } = new();
+    public List<Product>? Products { get; set; }
+    public List<Dish>? Dishes { get; set; }
 }

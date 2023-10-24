@@ -29,7 +29,6 @@ public class StoreHouseContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         //Relations Configuring
-
         //Ingredient-Category
         modelBuilder.Entity<Ingredient>(entity =>
         {

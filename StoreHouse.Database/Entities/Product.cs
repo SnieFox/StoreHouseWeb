@@ -10,5 +10,5 @@ public class Product
     public decimal Price { get; set; }
     public double Remains { get; set; }
 
-    public ProductCategory Category { get; set; } = new();
+    public ProductCategory? Category { get; set; }
 }

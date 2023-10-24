@@ -8,5 +8,5 @@ public class IngredientsCategory
     public string Name { get; set; } = string.Empty;
     public string? ImageId { get; set; }
 
-    public List<Ingredient> Ingredients { get; set; } = new();
+    public List<Ingredient>? Ingredients { get; set; }
 }

@@ -57,7 +57,9 @@ public class IngredientCategoryService : IIngredientCategoryService
     {
         try
         {
-            var ingredientsCategories = await _context.IngredientsCategories.ToListAsync();
+            var ingredientsCategories = await _context.IngredientsCategories
+                .Include(i => i.Ingredients)
+                .ToListAsync();
 
             return (true, string.Empty, ingredientsCategories);
         }

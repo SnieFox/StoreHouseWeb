@@ -114,13 +114,15 @@ public class ProductService : IProductService
     //Get PrimeCost by Name
     public async Task<(bool IsSuccess, string ErrorMessage, decimal PrimeCost)> GetPrimeCostByName(string name)
     {
-        if (!await _context.Ingredients.AnyAsync(i => i.Name == name))
+        if (!await _context.Products.AnyAsync(i => i.Name == name))
             return (false, "No product with this name", -1);
 
         var primeCost = await _context.Products
             .Where(p => p.Name == name)
             .Select(p => p.PrimeCost)
             .FirstOrDefaultAsync();
+        if (primeCost == 0)
+            return (false, "No Product with this name", primeCost);
         return (true, string.Empty, primeCost);
     }
 }

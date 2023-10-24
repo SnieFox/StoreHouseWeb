@@ -11,5 +11,5 @@ public class WriteOff
 
     public User? User { get; set; }
     public WriteOffCause? Cause { get; set; }
-    public List<ProductList> ProductLists { get; set; } = new();
+    public List<ProductList>? ProductLists { get; set; }
 }

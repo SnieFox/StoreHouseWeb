@@ -18,7 +18,13 @@ namespace StoreHouse.Api.Controllers;
 public class AccountController : Controller
 {
     private readonly IAccountService _accountService;
-    public AccountController(IAccountService accountService) => _accountService = accountService;
+    private readonly ITokenLifetimeManager _tokenLifetimeManager;
+
+    public AccountController(ITokenLifetimeManager tokenLifetimeManager, IAccountService accountService)
+    {
+        _accountService = accountService;
+        _tokenLifetimeManager = tokenLifetimeManager;
+    }
     
     [HttpPost]
     [Route("login")]
@@ -33,13 +39,12 @@ public class AccountController : Controller
             new Claim(ClaimTypes.Name, loginUser.User.Login),
             new Claim(ClaimTypes.Role, loginUser.User.RoleName)
         };
-        // создаем JWT-токен
         var jwt = new JwtSecurityToken(
-            issuer: "MyServer",
+            issuer: "MyIssuer",
             audience: "MyClient",
             claims: claims,
             expires: DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
-            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("keykeykeykeykeykeykeykeykeykey")), SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("somesuperstrongkey")), SecurityAlgorithms.HmacSha256));
 
         string token = new JwtSecurityTokenHandler().WriteToken(jwt);
         return Ok(new {loginUser.User, token});
@@ -50,7 +55,12 @@ public class AccountController : Controller
     [Route("logout")]
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return Ok();
+        string bearerToken  = HttpContext.Request.Headers["Authorization"];
+        var token =
+            bearerToken.Replace( "Bearer ", string.Empty, StringComparison.InvariantCultureIgnoreCase );
+
+        _tokenLifetimeManager.SignOut(new JwtSecurityToken(token));
+        
+        return Ok("Token revoked");
     }
 }

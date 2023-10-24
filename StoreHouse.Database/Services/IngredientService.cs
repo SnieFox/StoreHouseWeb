@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StoreHouse.Database.Entities;
+using StoreHouse.Database.Services.DTO;
 using StoreHouse.Database.Services.Interfaces;
 using StoreHouse.Database.StoreHouseDbContext;
 
@@ -106,10 +107,10 @@ public class IngredientService : IIngredientService
         return (true, string.Empty, primeCost);
     }
 
-    public async Task<(bool IsSuccess, string ErrorMessage, List<(int Id, string Name, double Weight, decimal PrimeCost)> SemiProducts)> GetRelatedSemiProductsAsync(
+    public async Task<(bool IsSuccess, string ErrorMessage, List<RelatedSemiProductsDTO> SemiProducts)> GetRelatedSemiProductsAsync(
         Ingredient ingredient)
     {
-        var semiProductResponse = new List<(int Id, string Name, double Weight, decimal PrimeCost)>();
+        var semiProductResponse = new List<RelatedSemiProductsDTO>();
 
         var productLists = await _context.ProductLists
             .Where(p => p.SemiProductId != 0 && p.Name == ingredient.Name)
@@ -118,9 +119,15 @@ public class IngredientService : IIngredientService
         foreach (var product in productLists)
         {
             var semiProduct = await _context.SemiProducts
-                .Where(s => s.Id == product.Id).FirstOrDefaultAsync();
+                .Where(s => s.Id == product.SemiProductId).FirstOrDefaultAsync();
             
-            semiProductResponse.Add((semiProduct.Id, semiProduct.Name, product.Count, product.PrimeCost));
+            semiProductResponse.Add(new RelatedSemiProductsDTO
+            {
+                Id = semiProduct.Id,
+                Name = semiProduct.Name,
+                Weight = product.Count,
+                PrimeCost = product.PrimeCost
+            });
         }
 
         return (true, string.Empty, semiProductResponse);

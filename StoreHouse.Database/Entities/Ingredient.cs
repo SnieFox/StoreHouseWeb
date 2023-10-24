@@ -9,5 +9,5 @@ public class Ingredient
     public decimal PrimeCost { get; set; }
     public double Remains { get; set; }
 
-    public IngredientsCategory Category { get; set; } = new();
+    public IngredientsCategory? Category { get; set; }
 }

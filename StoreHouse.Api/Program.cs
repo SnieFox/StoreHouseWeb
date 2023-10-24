@@ -1,38 +1,45 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using StoreHouse.Api.Model.Extensions;
 using StoreHouse.Api.Model.Mapping;
+using StoreHouse.Api.Services;
+using StoreHouse.Api.Services.Interfaces;
+using StoreHouse.Database.Entities;
 using StoreHouse.Database.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+var tokenLifetimeManager = new JwtTokenLifetimeManager();
 //CORS
 builder.Services.AddCors();
+builder.Services
+    .AddSingleton<ITokenLifetimeManager>(tokenLifetimeManager);
 //Add Authentication 
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+builder.Services.AddAuthentication(j =>
+{
+    j.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    j.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    j.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(j =>
+{
+    j.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            // указывает, будет ли валидироваться издатель при валидации токена
-            ValidateIssuer = true,
-            // строка, представляющая издателя
-            ValidIssuer = "MyServer",
-            // будет ли валидироваться потребитель токена
-            ValidateAudience = true,
-            // установка потребителя токена
-            ValidAudience = "MyClient",
-            // будет ли валидироваться время существования
-            ValidateLifetime = true,
-            // установка ключа безопасности
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("keykeykeykeykeykeykeykeykeykey")),
-            // валидация ключа безопасности
-            ValidateIssuerSigningKey = true,
-        };
-    });
+        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]!)),
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        LifetimeValidator = tokenLifetimeManager.ValidateTokenLifetime
+
+    };
+});
+
+builder.Services.AddAuthorization();
 
 //Database Context
 var sqlServerConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -60,9 +67,8 @@ app.UseCors(b => b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

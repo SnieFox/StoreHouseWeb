@@ -10,7 +10,6 @@ public class MenuProductRequest
     public string Name { get; set; }
     [Required]
     public string CategoryName { get; set; }
-    [Required]
     public string ImageId { get; set; }
     [Required]
     public decimal PrimeCost { get; set; }

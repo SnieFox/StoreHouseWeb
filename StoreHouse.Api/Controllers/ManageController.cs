@@ -8,7 +8,7 @@ namespace StoreHouse.Api.Controllers;
 
 [ApiController]
 [Route($"manage")]
-//[Authorize]
+[Authorize]
 public class ManageController : Controller
 {
     private readonly IManageService _manageService;

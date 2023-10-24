@@ -9,5 +9,5 @@ public class Dish
     public string ImageId { get; set; } = string.Empty;
     
     public ProductCategory? Category { get; set; }
-    public List<ProductList> ProductLists { get; set; } = new();
+    public List<ProductList>? ProductLists { get; set; }
 }

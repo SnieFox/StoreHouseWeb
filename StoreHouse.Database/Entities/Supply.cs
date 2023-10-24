@@ -12,5 +12,5 @@ public class Supply
     
     public Supplier? Supplier { get; set; }
     public User? User { get; set; }
-    public List<ProductList> ProductLists { get; set; } = new();
+    public List<ProductList>? ProductLists { get; set; }
 }

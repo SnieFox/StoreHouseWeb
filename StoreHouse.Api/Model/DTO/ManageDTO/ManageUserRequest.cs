@@ -20,5 +20,7 @@ public class ManageUserRequest
     [Phone]
     public string MobilePhone { get; set; }
     [Required]
+    [StringLength(4, MinimumLength = 4)]
+    [RegularExpression(@"^\d+$", ErrorMessage = "Можно использовать только цифры.")]
     public string PinCode { get; set; }
 }

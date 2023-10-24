@@ -8,5 +8,5 @@ public class SemiProduct
     public decimal PrimeCost { get; set; }
     public string Prescription { get; set; } = string.Empty;
 
-    public List<ProductList> ProductLists { get; set; } = new();
+    public List<ProductList>? ProductLists { get; set; }
 }

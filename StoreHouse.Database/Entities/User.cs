@@ -8,12 +8,12 @@ public class User
     public string Login { get; set; } = string.Empty;
     public string HashedPassword { get; set; } = string.Empty;
     public DateTime LastLoginDate { get; set; }
-    public int PinCode { get; set; }
+    public string PinCode { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string MobilePhone { get; set; } = string.Empty;
     
     public Role? Role { get; set; }
-    public List<Receipt> Receipts { get; set; } = new();
-    public List<WriteOff> WriteOffs { get; set; } = new();
-    public List<Supply> Supplies { get; set; } = new();
+    public List<Receipt>? Receipts { get; set; }
+    public List<WriteOff>? WriteOffs { get; set; }
+    public List<Supply>? Supplies { get; set; }
 }
