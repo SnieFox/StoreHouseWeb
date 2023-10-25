@@ -8,7 +8,7 @@ namespace StoreHouse.Api.Controllers;
 
 [ApiController]
 [Route($"menu")]
-//[Authorize]
+[Authorize]
 public class MenuController : Controller
 {
     private readonly IMenuService _menuService;

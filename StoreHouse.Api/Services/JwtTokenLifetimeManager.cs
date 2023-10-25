@@ -18,13 +18,22 @@ public class JwtTokenLifetimeManager : ITokenLifetimeManager
         token.ValidTo >= DateTime.UtcNow &&
         DisavowedSignatures.ContainsKey( token.RawSignature ) is false;
 
-    public void SignOut( SecurityToken securityToken )
+    public (bool IsSuccess, string ErrorManage) SignOut(SecurityToken securityToken)
     {
-        if (securityToken is JwtSecurityToken token)
-            DisavowedSignatures.TryAdd( token.RawSignature, token.ValidTo );
+        try
+        {
+            if (securityToken is JwtSecurityToken token)
+                DisavowedSignatures.TryAdd(token.RawSignature, token.ValidTo);
 
-        foreach (( string? key, DateTime _) in DisavowedSignatures.Where(x => x.Value < DateTime.UtcNow ))
-            DisavowedSignatures.TryRemove(key, out DateTime _);
+            foreach ((string? key, DateTime _) in DisavowedSignatures.Where(x => x.Value < DateTime.UtcNow))
+                DisavowedSignatures.TryRemove(key, out DateTime _);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
     
 }

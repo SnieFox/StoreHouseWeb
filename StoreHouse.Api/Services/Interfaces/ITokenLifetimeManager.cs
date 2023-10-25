@@ -4,7 +4,7 @@ namespace StoreHouse.Api.Services.Interfaces;
 
 public interface ITokenLifetimeManager
 {
-    void SignOut(SecurityToken securityToken);
+    (bool IsSuccess, string ErrorManage) SignOut(SecurityToken securityToken);
 
     bool ValidateTokenLifetime(DateTime? notBefore,
         DateTime? expires,

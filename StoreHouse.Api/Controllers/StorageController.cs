@@ -7,7 +7,7 @@ namespace StoreHouse.Api.Controllers;
 
 [ApiController]
 [Route($"storage")]
-//[Authorize]
+[Authorize]
 public class StorageController : Controller
 {
     private readonly IStorageService _storageService;

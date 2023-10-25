@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StoreHouse.Api.Services.Interfaces;
 
 namespace StoreHouse.Api.Controllers;
 
 [ApiController]
 [Route($"stats")]
+[Authorize]
 public class StatisticsController : Controller
 {
     private readonly IStatisticsService _statisticsService;

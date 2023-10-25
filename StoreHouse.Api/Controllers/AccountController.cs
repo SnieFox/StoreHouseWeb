@@ -59,7 +59,9 @@ public class AccountController : Controller
         var token =
             bearerToken.Replace( "Bearer ", string.Empty, StringComparison.InvariantCultureIgnoreCase );
 
-        _tokenLifetimeManager.SignOut(new JwtSecurityToken(token));
+        var signOut = _tokenLifetimeManager.SignOut(new JwtSecurityToken(token));
+        if (!signOut.IsSuccess)
+            return BadRequest(signOut.ErrorManage);
         
         return Ok("Token revoked");
     }
