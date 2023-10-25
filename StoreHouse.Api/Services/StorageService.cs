@@ -48,10 +48,10 @@ public class StorageService : IStorageService
                 return (false, ingredients.ErrorMessage, new List<StorageRemainResponse>());
 
             //Mapping Products and Ingredients
-            var allProductsResponse = _mapper.Map<List<StorageRemainResponse>>(products);
+            var allProductsResponse = _mapper.Map<List<StorageRemainResponse>>(products.ProductList);
             if (allProductsResponse == null)
                 return (false, "Mapping failed, object is null", new List<StorageRemainResponse>());
-            var allIngredientsResponse = _mapper.Map<List<StorageRemainResponse>>(ingredients);
+            var allIngredientsResponse = _mapper.Map<List<StorageRemainResponse>>(ingredients.IngredientList);
             if (allIngredientsResponse == null)
                 return (false, "Mapping failed, object is null", new List<StorageRemainResponse>());
 
@@ -90,7 +90,7 @@ public class StorageService : IStorageService
                 return (false, supplies.ErrorMessage, new List<StorageSupplyResponse>());
 
             //Mapping Supplies and ProductList
-            var allSuppliesResponse = _mapper.Map<List<StorageSupplyResponse>>(supplies);
+            var allSuppliesResponse = _mapper.Map<List<StorageSupplyResponse>>(supplies.SupplyList);
             if (allSuppliesResponse == null)
                 return (false, "Mapping failed, object is null", new List<StorageSupplyResponse>());
 
@@ -134,8 +134,10 @@ public class StorageService : IStorageService
             {
                 product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
             }
-
-            return (false, "There is no Ingredient or Product with this name", -1);
+            else
+            {
+                return (false, "There is no Ingredient or Product with this name", -1);
+            }
         }
 
         //Get Supplier Id by Name
@@ -184,8 +186,10 @@ public class StorageService : IStorageService
             {
                 product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
             }
-
-            return (false, "There is no Ingredient or Product with this name");
+            else
+            {
+                return (false, "There is no Ingredient or Product with this name");
+            }
         }
 
         //Get Supplier Id by Name
@@ -235,7 +239,7 @@ public class StorageService : IStorageService
             return (false, writeOffs.ErrorMessage, new List<StorageWriteOffResponse>());
         
         //Mapping WriteOff to StorageWriteOffResponse
-        var writeOffMap = _mapper.Map<List<StorageWriteOffResponse>>(writeOffs);
+        var writeOffMap = _mapper.Map<List<StorageWriteOffResponse>>(writeOffs.WriteOffList);
         if (writeOffMap == null)
             return (false, "Mapping failed, object is null", new List<StorageWriteOffResponse>());
         
@@ -348,8 +352,10 @@ public class StorageService : IStorageService
                 
                 product.Price = (decimal)product.Count * sum;
             }
-
-            return (false, "There is no Ingredient or Product with this name");
+            else
+            {
+                return (false, "There is no Ingredient or Product with this name");
+            }
         }
         
         //Get Write Off Cause Id by Name
@@ -365,9 +371,9 @@ public class StorageService : IStorageService
         writeOffMap.UserId = user.User.Id;
         writeOffMap.UserName = user.User.FullName;
         writeOffMap.CauseId = writeOffCauseIdResult.Id;
-        
+        writeOffMap.ProductLists = productListMap;
         //Call the DAL update service
-        var updateWriteOff = await _writeOffService.UpdateWriteOffAsync(writeOffMap);
+        var updateWriteOff = await _writeOffService.CreateWriteOffAsync(writeOffMap);
         if (!updateWriteOff.IsSuccess)
             return (false, updateWriteOff.ErrorMessage);
 
@@ -382,7 +388,119 @@ public class StorageService : IStorageService
 
         return (true, string.Empty);
     }
+
+    public async Task<(bool IsSuccess, string ErrorMessage, List<StorageWriteOffCauseResponse> AllWriteOffCauses)> GetAllWriteOffCausesAsync()
+    {
+        //Get Suppliers
+        var writeOffCauses = await _writeOffCauseService.GetAllWriteOffCausesAsync();
+        if (!writeOffCauses.IsSuccess)
+            return (false, writeOffCauses.ErrorMessage, new List<StorageWriteOffCauseResponse>());
+
+        //Map Product Categories
+        var writeOffCausesMap = _mapper.Map<List<StorageWriteOffCauseResponse>>(writeOffCauses.WriteOffCauseList);
+        if (writeOffCausesMap == null)
+            return (false, "Mapping failed, object is null", new List<StorageWriteOffCauseResponse>());
+
+        foreach (var writeOffCauseResponse in writeOffCausesMap)
+        {
+            foreach (var writeOff in writeOffCauses.WriteOffCauseList.Where(wr => wr.Id == writeOffCauseResponse.Id))
+            {
+                decimal writeOffSum = 0;
+                foreach (var wrOff in writeOff.WriteOffs)
+                {
+                    var sum = GetSum(wrOff.ProductLists);
+                    if (!sum.IsSuccess)
+                        return (false, sum.ErrorMessage, new List<StorageWriteOffCauseResponse>());
+
+                    writeOffSum += sum.Sum;
+                }
+                writeOffCauseResponse.WriteOffCount = writeOff.WriteOffs.Count;
+                writeOffCauseResponse.WriteOffSum = writeOffSum;
+            }
+        }
+
+        return (true, string.Empty, writeOffCausesMap);
+    }
     
+    public async Task<(bool IsSuccess, string ErrorMessage)> AddWriteOffCauseAsync(StorageWriteOffCauseRequest writeOffCause)
+    {
+        //Map Product Category
+        var writeOffCauseMap = _mapper.Map<WriteOffCause>(writeOffCause);
+        if (writeOffCauseMap == null)
+            return (false, "Mapping failed, object is null");
+        
+        //Call the DAL update service
+        var addWriteOffCause = await _writeOffCauseService.CreateWriteOffCauseAsync(writeOffCauseMap);
+        if (!addWriteOffCause.IsSuccess)
+            return (false, addWriteOffCause.ErrorMessage);
+
+        return (true, string.Empty);
+    }
+    
+    public async Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffCauseAsync(int writeOffCauseId)
+    {
+        var deletedWriteOffCause = await _writeOffCauseService.DeleteWriteOffCauseAsync(writeOffCauseId);
+        if (!deletedWriteOffCause.IsSuccess)
+            return (false, deletedWriteOffCause.ErrorMessage);
+
+        return (true, string.Empty);
+    }
+    public async Task<(bool IsSuccess, string ErrorMessage, List<StorageSupplierResponse> AllSuppliers)> GetAllSuppliersAsync()
+    {
+        //Get Suppliers
+        var suppliers = await _supplierService.GetAllSuppliersAsync();
+        if (!suppliers.IsSuccess)
+            return (false, suppliers.ErrorMessage, new List<StorageSupplierResponse>());
+
+        //Map Product Categories
+        var suppliersMap = _mapper.Map<List<StorageSupplierResponse>>(suppliers.SupplierList);
+        if (suppliersMap == null)
+            return (false, "Mapping failed, object is null", new List<StorageSupplierResponse>());
+
+        foreach (var supplierResponse in suppliersMap)
+        {
+            foreach (var supplier in suppliers.SupplierList.Where(supply => supply.Id == supplierResponse.Id))
+            {
+                decimal suppliesSum = 0;
+                foreach (var suply in supplier.Supplies)
+                {
+                    var sum = GetSum(suply.ProductLists);
+                    if (!sum.IsSuccess)
+                        return (false, sum.ErrorMessage, new List<StorageSupplierResponse>());
+
+                    suppliesSum += sum.Sum;
+                }
+                supplierResponse.SuppliesCount = supplier.Supplies.Count;
+                supplierResponse.SupplySum = suppliesSum;
+            }
+        }
+
+        return (true, string.Empty, suppliersMap);
+    }
+    
+    public async Task<(bool IsSuccess, string ErrorMessage)> AddSupplierAsync(StorageSupplierRequest supplier)
+    {
+        //Map Product Category
+        var supplierMap = _mapper.Map<Supplier>(supplier);
+        if (supplierMap == null)
+            return (false, "Mapping failed, object is null");
+        
+        //Call the DAL update service
+        var addSupplier = await _supplierService.CreateSupplierAsync(supplierMap);
+        if (!addSupplier.IsSuccess)
+            return (false, addSupplier.ErrorMessage);
+
+        return (true, string.Empty);
+    }
+    
+    public async Task<(bool IsSuccess, string ErrorMessage)> DeleteSupplierAsync(int supplierId)
+    {
+        var deletedSupplier = await _supplierService.DeleteSupplierAsync(supplierId);
+        if (!deletedSupplier.IsSuccess)
+            return (false, deletedSupplier.ErrorMessage);
+
+        return (true, string.Empty);
+    }
     
     //Static method to Get Sum of products in ProductLists
     private static (bool IsSuccess, string ErrorMessage, decimal Sum) GetSum(List<ProductList> productLists)
@@ -393,7 +511,7 @@ public class StorageService : IStorageService
 
             foreach (var product in productLists)
             {
-                sum += product.Price * (decimal)product.Count;
+                sum += product.Price;
             }
 
             return (true, string.Empty, sum);
@@ -403,4 +521,6 @@ public class StorageService : IStorageService
             return (false, e.Message, 0);
         }
     }
+    
+    
 }

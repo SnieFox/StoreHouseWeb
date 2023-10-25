@@ -22,15 +22,13 @@ public class WriteOffService : IWriteOffService
         try
         {
             await _context.WriteOffs.AddAsync(writeOff);
-            var saved = await _context.SaveChangesAsync();
+            //var saved = await _context.SaveChangesAsync();
 
             var updateResult = await _context.UpdateRemainsAsync(writeOff.ProductLists, false);
             if (!updateResult.IsSuccess)
                 return (false, $"Update of Remains Failed. {updateResult.ErrorMessage}", writeOff);
 
-            return saved == 0
-                            ? (false, "Something went wrong when adding to db", writeOff)
-                            : (true, string.Empty, writeOff);
+            return (true, string.Empty, writeOff);
         }
         catch (Exception e)
         {
@@ -94,7 +92,9 @@ public class WriteOffService : IWriteOffService
     {
         try
         {
-            var writeOffs = await _context.WriteOffs.ToListAsync();
+            var writeOffs = await _context.WriteOffs
+                .Include(w => w.ProductLists)
+                .ToListAsync();
 
             return (true, string.Empty, writeOffs);
         }

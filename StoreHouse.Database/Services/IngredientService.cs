@@ -113,7 +113,7 @@ public class IngredientService : IIngredientService
         var semiProductResponse = new List<RelatedSemiProductsDTO>();
 
         var productLists = await _context.ProductLists
-            .Where(p => p.SemiProductId != 0 && p.Name == ingredient.Name)
+            .Where(p => p.SemiProductId != null && p.Name == ingredient.Name)
             .ToListAsync();
 
         foreach (var product in productLists)

@@ -10,6 +10,6 @@ public class WriteOff
     public string Comment { get; set; } = string.Empty;
 
     public User? User { get; set; }
-    public WriteOffCause? Cause { get; set; }
+    public WriteOffCause? WriteOffCause { get; set; }
     public List<ProductList>? ProductLists { get; set; }
 }

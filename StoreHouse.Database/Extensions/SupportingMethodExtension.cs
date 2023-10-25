@@ -40,7 +40,7 @@ public static class SupportingMethodExtension
                     var result = await UpdateRemainsAsync(dbService, semiProduct.ProductLists, increase);
                     errors += $"SemiProduct id {semiProduct.Id}: {result.ErrorMessage}; ";
                 }
-
+                
                 var saved = await dbService.SaveChangesAsync();
 
                 if (saved == 0)

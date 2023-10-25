@@ -80,7 +80,7 @@ public class StoreHouseContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull);
             
             //WriteOff-Cause
-            entity.HasOne(c => c.Cause)
+            entity.HasOne(c => c.WriteOffCause)
                 .WithMany(p => p.WriteOffs)
                 .HasForeignKey(c => c.CauseId)
                 .OnDelete(DeleteBehavior.ClientSetNull);

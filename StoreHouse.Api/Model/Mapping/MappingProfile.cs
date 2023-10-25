@@ -116,7 +116,7 @@ public class MappingProfile : Profile
             .ForMember(d => d.UserName,
                 op => op.MapFrom(srs => srs.UserName))
             .ForMember(d => d.Cause,
-                op => op.MapFrom(srs => srs.Cause.Name));
+                op => op.MapFrom(srs => srs.WriteOffCause.Name));
 
         this.CreateMap<ProductList, WriteOffProductListResponse>()
             .ForMember(d => d.Id,
@@ -148,6 +148,33 @@ public class MappingProfile : Profile
             .ForMember(d => d.Count,
                 op => op.MapFrom(srs => srs.Count));
 
+        this.CreateMap<Supplier, StorageSupplierResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.MobilePhone,
+                op => op.MapFrom(srs => srs.MobilePhone))
+            .ForMember(d => d.Comment,
+                op => op.MapFrom(srs => srs.Comment));
+
+        this.CreateMap<StorageSupplierRequest, Supplier>()
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Comment,
+                op => op.MapFrom(srs => srs.Comment))
+            .ForMember(d => d.MobilePhone,
+                op => op.MapFrom(srs => srs.MobilePhone));
+
+        this.CreateMap<StorageWriteOffCauseRequest, WriteOffCause>()
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name));
+
+        this.CreateMap<WriteOffCause, StorageWriteOffCauseResponse>()
+            .ForMember(d => d.Id,
+                op => op.MapFrom(srs => srs.Id))
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name));
         #endregion
 
         #region Mapping Data for Menu Service

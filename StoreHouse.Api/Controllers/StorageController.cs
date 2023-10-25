@@ -46,6 +46,28 @@ public class StorageController : Controller
         return Ok(writeOffs.AllWriteOffs);
     }
     
+    [HttpGet]
+    [Route("suppliers")]
+    public async Task<IActionResult> GetSuppliers()
+    {
+        var suppliers = await _storageService.GetAllSuppliersAsync();
+        if (!suppliers.IsSuccess)
+            return BadRequest(suppliers.ErrorMessage);
+        
+        return Ok(suppliers.AllSuppliers);
+    }
+    
+    [HttpGet]
+    [Route("writeoffcauses")]
+    public async Task<IActionResult> GetWriteOffCauses()
+    {
+        var writeOffCauses = await _storageService.GetAllWriteOffCausesAsync();
+        if (!writeOffCauses.IsSuccess)
+            return BadRequest(writeOffCauses.ErrorMessage);
+        
+        return Ok(writeOffCauses.AllWriteOffCauses);
+    }
+    
     [HttpPut]
     [Route("supply/update")]
     public async Task<IActionResult> UpdateSupply(StorageSupplyRequest updatedSupply)
@@ -109,6 +131,46 @@ public class StorageController : Controller
     }
     
     [HttpPost]
+    [Route("supplier/create")]
+    public async Task<IActionResult> AddSupplier(StorageSupplierRequest addSupplier)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errorMessages = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(errorMessages);
+        }
+
+        var addSupplierResult = await _storageService.AddSupplierAsync(addSupplier);
+        if (!addSupplierResult.IsSuccess)
+            return BadRequest(addSupplierResult.ErrorMessage);
+
+        return Ok();
+    }
+    
+    [HttpPost]
+    [Route("writeoffcause/create")]
+    public async Task<IActionResult> AddWriteOffCause(StorageWriteOffCauseRequest addWriteOffCause)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errorMessages = ModelState.Values
+                .SelectMany(v => v.Errors)
+                .Select(e => e.ErrorMessage)
+                .ToList();
+            return BadRequest(errorMessages);
+        }
+
+        var addWriteOffCauseResult = await _storageService.AddWriteOffCauseAsync(addWriteOffCause);
+        if (!addWriteOffCauseResult.IsSuccess)
+            return BadRequest(addWriteOffCauseResult.ErrorMessage);
+
+        return Ok();
+    }
+    
+    [HttpPost]
     [Route("writeoff/create")]
     public async Task<IActionResult> AddWriteOff(StorageWriteOffRequest updatedWriteOff)
     {
@@ -148,6 +210,28 @@ public class StorageController : Controller
         var deletedWriteOff = await _storageService.DeleteWriteOffAsync(id);
         if (!deletedWriteOff.IsSuccess)
             return BadRequest(deletedWriteOff.ErrorMessage);
+
+        return Ok();
+    }
+    
+    [HttpDelete]
+    [Route("supplier/delete")]
+    public async Task<IActionResult> DeleteSupplier(int id)
+    {
+        var deletedSupplier = await _storageService.DeleteSupplierAsync(id);
+        if (!deletedSupplier.IsSuccess)
+            return BadRequest(deletedSupplier.ErrorMessage);
+
+        return Ok();
+    }
+    
+    [HttpDelete]
+    [Route("writeoffcause/delete")]
+    public async Task<IActionResult> DeleteWriteOffCause(int id)
+    {
+        var deletedWriteOffCause = await _storageService.DeleteWriteOffCauseAsync(id);
+        if (!deletedWriteOffCause.IsSuccess)
+            return BadRequest(deletedWriteOffCause.ErrorMessage);
 
         return Ok();
     }

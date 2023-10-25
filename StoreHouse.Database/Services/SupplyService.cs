@@ -26,10 +26,8 @@ public class SupplyService : ISupplyService
             if (!updateResult.IsSuccess)
                 return (false, $"Update of Remains Failed. {updateResult.ErrorMessage}", supply);
 
-            var saved = await _context.SaveChangesAsync();
-            return saved == 0
-                            ? (false, "Something went wrong when adding to db", supply)
-                            : (true, string.Empty, supply);
+
+            return (true, string.Empty, supply);
         }
         catch (Exception e)
         {
@@ -42,19 +40,43 @@ public class SupplyService : ISupplyService
     {
         try
         {
-            var supply = await _context.Supplies.FirstOrDefaultAsync(c => c.Id == updatedSupply.Id);
-            if (supply == null) return (false, "Supply does not exist", updatedSupply);
+            var existingSupply = await _context.Supplies
+                .Include(s => s.ProductLists)
+                .FirstOrDefaultAsync(s => s.Id == updatedSupply.Id);
+            if (existingSupply == null)
+                return (false, "Supply not found", updatedSupply);
+            
+            existingSupply.SupplierId = updatedSupply.SupplierId;
+            existingSupply.Date = updatedSupply.Date;
+            existingSupply.Sum = updatedSupply.Sum;
+            existingSupply.Comment = updatedSupply.Comment;
+            
+            //Откат изменений
+            if (updatedSupply.ProductLists.Count != 0)
+            {
+                var refundResult = await _context.UpdateRemainsAsync(existingSupply.ProductLists, false);
+                if (!refundResult.IsSuccess) return (false, $"Update of Remains Failed. {refundResult.ErrorMessage}", updatedSupply);
 
-            supply.SupplierId = updatedSupply.SupplierId;
-            supply.Date = updatedSupply.Date;
-            supply.Sum = updatedSupply.Sum;
-            supply.Comment = updatedSupply.Comment;
+                foreach (var productList in existingSupply.ProductLists)
+                {
+                    _context.ProductLists.Remove(productList);
+                }
+                
+                await _context.SaveChangesAsync();
+            }
+            
+            var updateResult = await _context.UpdateRemainsAsync(updatedSupply.ProductLists, true);
+            if (!updateResult.IsSuccess) return (false, $"Update of Remains Failed. {updateResult.ErrorMessage}", updatedSupply);
+
+            foreach (var productList in updatedSupply.ProductLists)
+            {
+                productList.SupplyId = existingSupply.Id;
+                _context.ProductLists.Add(productList);
+            }
+            
             var saved = await _context.SaveChangesAsync();
 
-            return saved == 0
-                            ? (false, $"Something went wrong when updating Supply {updatedSupply.Id} to db",
-                                            updatedSupply)
-                            : (true, string.Empty, updatedSupply);
+            return saved == 0 ? (false, "Something went wrong when deleting from db", updatedSupply) : (true, string.Empty, updatedSupply);
         }
         catch (Exception e)
         {
