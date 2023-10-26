@@ -49,6 +49,29 @@ public class WriteOffService : IWriteOffService
             writeOff.UserName = updatedWriteOff.UserName;
             writeOff.Date = updatedWriteOff.Date;
             writeOff.Comment = updatedWriteOff.Comment;
+            
+            //Откат изменений
+            if (updatedWriteOff.ProductLists.Count != 0)
+            {
+                var refundResult = await _context.UpdateRemainsAsync(writeOff.ProductLists, true);
+                if (!refundResult.IsSuccess) return (false, $"Update of Remains Failed. {refundResult.ErrorMessage}", updatedWriteOff);
+
+                foreach (var productList in writeOff.ProductLists)
+                {
+                    _context.ProductLists.Remove(productList);
+                }
+                
+                await _context.SaveChangesAsync();
+            }
+            
+            var updateResult = await _context.UpdateRemainsAsync(updatedWriteOff.ProductLists, false);
+            if (!updateResult.IsSuccess) return (false, $"Update of Remains Failed. {updateResult.ErrorMessage}", updatedWriteOff);
+
+            foreach (var productList in writeOff.ProductLists)
+            {
+                productList.SupplyId = writeOff.Id;
+                _context.ProductLists.Add(productList);
+            }
             var saved = await _context.SaveChangesAsync();
 
             return saved == 0
