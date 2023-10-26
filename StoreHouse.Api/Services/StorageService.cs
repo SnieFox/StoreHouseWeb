@@ -113,393 +113,496 @@ public class StorageService : IStorageService
 
     public async Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateSupplyAsync(StorageSupplyRequest updatedSupply)
     {
-        //Mapping StorageSupplyRequest to Supply and SupplyProductListRequest to ProductList
-        var supplyMap = _mapper.Map<Supply>(updatedSupply);
-        if(supplyMap == null)
-            return (false, "Mapping failed, object is null", -1);
-        var productListMap = _mapper.Map<List<ProductList>>(updatedSupply.ProductList);
-        if(productListMap == null)
-            return (false, "Mapping failed, object is null", -1);
-        
-        //Change required fields
-        foreach (var product in productListMap)
+        try
         {
-            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
-            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
-            if (primeCostIngredientResult.IsSuccess)
+            //Mapping StorageSupplyRequest to Supply and SupplyProductListRequest to ProductList
+            var supplyMap = _mapper.Map<Supply>(updatedSupply);
+            if (supplyMap == null)
+                return (false, "Mapping failed, object is null", -1);
+            var productListMap = _mapper.Map<List<ProductList>>(updatedSupply.ProductList);
+            if (productListMap == null)
+                return (false, "Mapping failed, object is null", -1);
+
+            //Change required fields
+            foreach (var product in productListMap)
             {
-                product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
+                var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+                var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name);
+                if (primeCostIngredientResult.IsSuccess)
+                {
+                    product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
+                }
+                else if (primeCostProductResult.IsSuccess)
+                {
+                    product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
+                }
+                else
+                {
+                    return (false, "There is no Ingredient or Product with this name", -1);
+                }
             }
-            else if (primeCostProductResult.IsSuccess)
-            {
-                product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
-            }
-            else
-            {
-                return (false, "There is no Ingredient or Product with this name", -1);
-            }
+
+            //Get Supplier Id by Name
+            var supplierIdResult = await _supplierService.GetIdByName(updatedSupply.SupplierName);
+            if (!supplierIdResult.IsSuccess)
+                return (false, supplierIdResult.ErrorMessage, -1);
+
+            //Get ProductList Sum
+            var sum = GetSum(productListMap);
+            if (!sum.IsSuccess)
+                return (false, sum.ErrorMessage, -1);
+
+            //Change required properties
+            supplyMap.Sum = sum.Sum;
+            supplyMap.SupplierId = supplierIdResult.Id;
+            supplyMap.ProductLists = productListMap;
+
+            //Call the DAL update service
+            var updateSupply = await _supplyService.UpdateSupplyAsync(supplyMap);
+            if (!updateSupply.IsSuccess)
+                return (false, updateSupply.ErrorMessage, -1);
+
+            return (true, string.Empty, updatedSupply.Id);
         }
-
-        //Get Supplier Id by Name
-        var supplierIdResult = await _supplierService.GetIdByName(updatedSupply.SupplierName);
-        if (!supplierIdResult.IsSuccess)
-            return (false, supplierIdResult.ErrorMessage, -1);
-        
-        //Get ProductList Sum
-        var sum = GetSum(productListMap);
-        if (!sum.IsSuccess)
-            return (false, sum.ErrorMessage, -1);
-
-        //Change required properties
-        supplyMap.Sum = sum.Sum;
-        supplyMap.SupplierId = supplierIdResult.Id;
-        supplyMap.ProductLists = productListMap;
-        
-        //Call the DAL update service
-        var updateSupply = await _supplyService.UpdateSupplyAsync(supplyMap);
-        if (!updateSupply.IsSuccess)
-            return (false, updateSupply.ErrorMessage, -1);
-
-        return (true, string.Empty, updatedSupply.Id);
+        catch (Exception e)
+        {
+            return (false, e.Message, -1);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddSupplyAsync(StorageSupplyRequest supply, string userLogin)
     {
-        //Mapping StorageSupplyRequest to Supply and SupplyProductListRequest to ProductList
-        var supplyMap = _mapper.Map<Supply>(supply);
-        if(supplyMap == null)
-            return (false, "Mapping failed, object is null");
-        var productListMap = _mapper.Map<List<ProductList>>(supply.ProductList);
-        if(productListMap == null)
-            return (false, "Mapping failed, object is null");
-        
-        //Change required fields
-        foreach (var product in productListMap)
+        try
         {
-            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
-            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
-            if (primeCostIngredientResult.IsSuccess)
+            //Mapping StorageSupplyRequest to Supply and SupplyProductListRequest to ProductList
+            var supplyMap = _mapper.Map<Supply>(supply);
+            if (supplyMap == null)
+                return (false, "Mapping failed, object is null");
+            var productListMap = _mapper.Map<List<ProductList>>(supply.ProductList);
+            if (productListMap == null)
+                return (false, "Mapping failed, object is null");
+
+            //Change required fields
+            foreach (var product in productListMap)
             {
-                product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
+                var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+                var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name);
+                if (primeCostIngredientResult.IsSuccess)
+                {
+                    product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
+                }
+                else if (primeCostProductResult.IsSuccess)
+                {
+                    product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
+                }
+                else
+                {
+                    return (false, "There is no Ingredient or Product with this name");
+                }
             }
-            else if (primeCostProductResult.IsSuccess)
-            {
-                product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
-            }
-            else
-            {
-                return (false, "There is no Ingredient or Product with this name");
-            }
+
+            //Get Supplier Id by Name
+            var supplierIdResult = await _supplierService.GetIdByName(supply.SupplierName);
+            if (!supplierIdResult.IsSuccess)
+                return (false, supplierIdResult.ErrorMessage);
+
+            //Get ProductList Sum
+            var sum = GetSum(productListMap);
+            if (!sum.IsSuccess)
+                return (false, sum.ErrorMessage);
+
+            //Get User by Login
+            var user = await _userService.GetUserByLogin(userLogin);
+            if (!user.IsSuccess)
+                return (false, user.ErrorMessage);
+
+            //Change required properties
+            supplyMap.UserId = user.User.Id;
+            supplyMap.UserName = user.User.FullName;
+            supplyMap.Sum = sum.Sum;
+            supplyMap.SupplierId = supplierIdResult.Id;
+            supplyMap.ProductLists = productListMap;
+
+            //Call the DAL update service
+            var addSupply = await _supplyService.CreateSupplyAsync(supplyMap);
+            if (!addSupply.IsSuccess)
+                return (false, addSupply.ErrorMessage);
+
+            return (true, string.Empty);
         }
-
-        //Get Supplier Id by Name
-        var supplierIdResult = await _supplierService.GetIdByName(supply.SupplierName);
-        if (!supplierIdResult.IsSuccess)
-            return (false, supplierIdResult.ErrorMessage);
-        
-        //Get ProductList Sum
-        var sum = GetSum(productListMap);
-        if (!sum.IsSuccess)
-            return (false, sum.ErrorMessage);
-        
-        //Get User by Login
-        var user = await _userService.GetUserByLogin(userLogin);
-        if (!user.IsSuccess)
-            return (false, user.ErrorMessage);
-
-        //Change required properties
-        supplyMap.UserId = user.User.Id;
-        supplyMap.UserName = user.User.FullName;
-        supplyMap.Sum = sum.Sum;
-        supplyMap.SupplierId = supplierIdResult.Id;
-        supplyMap.ProductLists = productListMap;
-        
-        //Call the DAL update service
-        var addSupply = await _supplyService.CreateSupplyAsync(supplyMap);
-        if (!addSupply.IsSuccess)
-            return (false, addSupply.ErrorMessage);
-
-        return (true, string.Empty);
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteSupplyAsync(int supplyId)
     {
-        var deletedSupply = await _supplyService.DeleteSupplyAsync(supplyId);
-        if (!deletedSupply.IsSuccess)
-            return (false, deletedSupply.ErrorMessage);
+        try
+        {
+            var deletedSupply = await _supplyService.DeleteSupplyAsync(supplyId);
+            if (!deletedSupply.IsSuccess)
+                return (false, deletedSupply.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<StorageWriteOffResponse> AllWriteOffs)> GetAllWriteOffsAsync()
     {
-        //Get all WriteOffs
-        var writeOffs = await _writeOffService.GetAllWriteOffsAsync();
-        if (!writeOffs.IsSuccess)
-            return (false, writeOffs.ErrorMessage, new List<StorageWriteOffResponse>());
-        
-        //Mapping WriteOff to StorageWriteOffResponse
-        var writeOffMap = _mapper.Map<List<StorageWriteOffResponse>>(writeOffs.WriteOffList);
-        if (writeOffMap == null)
-            return (false, "Mapping failed, object is null", new List<StorageWriteOffResponse>());
-        
-        //Change required fields
-        foreach (var writeOffResult in writeOffMap)
+        try
         {
-            foreach (var writeOff in writeOffs.WriteOffList.Where(wr => wr.Id == writeOffResult.Id))
-            {
-                writeOffResult.ProductList = _mapper.Map<List<WriteOffProductListResponse>>(writeOff.ProductLists);
-            }
-        }
+            //Get all WriteOffs
+            var writeOffs = await _writeOffService.GetAllWriteOffsAsync();
+            if (!writeOffs.IsSuccess)
+                return (false, writeOffs.ErrorMessage, new List<StorageWriteOffResponse>());
 
-        return (true, string.Empty, writeOffMap);
+            //Mapping WriteOff to StorageWriteOffResponse
+            var writeOffMap = _mapper.Map<List<StorageWriteOffResponse>>(writeOffs.WriteOffList);
+            if (writeOffMap == null)
+                return (false, "Mapping failed, object is null", new List<StorageWriteOffResponse>());
+
+            //Change required fields
+            foreach (var writeOffResult in writeOffMap)
+            {
+                decimal writeOffSum = 0;
+                foreach (var writeOff in writeOffs.WriteOffList.Where(wr => wr.Id == writeOffResult.Id))
+                {
+                    writeOffResult.ProductList = _mapper.Map<List<WriteOffProductListResponse>>(writeOff.ProductLists);
+
+                    foreach (var productList in writeOff.ProductLists)
+                    {
+                        writeOffSum += productList.Price;
+                    }
+                }
+
+                writeOffResult.Sum = writeOffSum;
+            }
+
+            return (true, string.Empty, writeOffMap);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<StorageWriteOffResponse>());
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateWriteOffAsync(StorageWriteOffRequest updatedWriteOff)
     {
-        //Mapping StorageWriteOffRequest to WriteOff and WriteOffProductListRequest to ProductList
-        var writeOffMap = _mapper.Map<WriteOff>(updatedWriteOff);
-        if(writeOffMap == null)
-            return (false, "Mapping failed, object is null", -1);
-        var productListMap = _mapper.Map<List<ProductList>>(updatedWriteOff.ProductList);
-        if(productListMap == null)
-            return (false, "Mapping failed, object is null", -1);
-        
-        //Change required fields
-        foreach (var product in productListMap)
+        try
         {
-            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
-            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
-            var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name); 
-            var dishProductListResult = await _dishService.GetProductListByName(product.Name); 
-            if (primeCostIngredientResult.IsSuccess)
+            //Mapping StorageWriteOffRequest to WriteOff and WriteOffProductListRequest to ProductList
+            var writeOffMap = _mapper.Map<WriteOff>(updatedWriteOff);
+            if (writeOffMap == null)
+                return (false, "Mapping failed, object is null", -1);
+            var productListMap = _mapper.Map<List<ProductList>>(updatedWriteOff.ProductList);
+            if (productListMap == null)
+                return (false, "Mapping failed, object is null", -1);
+
+            //Change required fields
+            foreach (var product in productListMap)
             {
-                product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
-            }
-            else if (primeCostProductResult.IsSuccess)
-            {
-                product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
-            }
-            else if (primeCostSemiProductResult.IsSuccess)
-            {
-                product.Price = (decimal)product.Count * primeCostSemiProductResult.PrimeCost;
-            }
-            else if (dishProductListResult.IsSuccess)
-            {
-                decimal sum = 0;
-                foreach (var prod in dishProductListResult.ProductList)
+                var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+                var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name);
+                var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name);
+                var dishProductListResult = await _dishService.GetProductListByName(product.Name);
+                if (primeCostIngredientResult.IsSuccess)
                 {
-                    sum += prod.PrimeCost;
+                    product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
                 }
-                
-                product.Price = (decimal)product.Count * sum;
+                else if (primeCostProductResult.IsSuccess)
+                {
+                    product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
+                }
+                else if (primeCostSemiProductResult.IsSuccess)
+                {
+                    product.Price = (decimal)product.Count * primeCostSemiProductResult.PrimeCost;
+                }
+                else if (dishProductListResult.IsSuccess)
+                {
+                    decimal sum = 0;
+                    foreach (var prod in dishProductListResult.ProductList)
+                    {
+                        sum += prod.PrimeCost;
+                    }
+
+                    product.Price = (decimal)product.Count * sum;
+                }
+
+                return (false, "There is no Ingredient or Product with this name", -1);
             }
 
-            return (false, "There is no Ingredient or Product with this name", -1);
+            //Get Supplier Id by Name
+            var writeOffCauseIdResult = await _writeOffCauseService.GetIdByName(updatedWriteOff.Cause);
+            if (!writeOffCauseIdResult.IsSuccess)
+                return (false, writeOffCauseIdResult.ErrorMessage, -1);
+
+            writeOffMap.CauseId = writeOffCauseIdResult.Id;
+
+            //Call the DAL update service
+            var updateWriteOff = await _writeOffService.UpdateWriteOffAsync(writeOffMap);
+            if (!updateWriteOff.IsSuccess)
+                return (false, updateWriteOff.ErrorMessage, -1);
+
+            return (true, string.Empty, updatedWriteOff.Id);
         }
-        
-        //Get Supplier Id by Name
-        var writeOffCauseIdResult = await _writeOffCauseService.GetIdByName(updatedWriteOff.Cause);
-        if (!writeOffCauseIdResult.IsSuccess)
-            return (false, writeOffCauseIdResult.ErrorMessage, -1);
-
-        writeOffMap.CauseId = writeOffCauseIdResult.Id;
-        
-        //Call the DAL update service
-        var updateWriteOff = await _writeOffService.UpdateWriteOffAsync(writeOffMap);
-        if (!updateWriteOff.IsSuccess)
-            return (false, updateWriteOff.ErrorMessage, -1);
-
-        return (true, string.Empty, updatedWriteOff.Id);
+        catch (Exception e)
+        {
+            return (false, e.Message, -1);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddWriteOffAsync(StorageWriteOffRequest writeOff, string userLogin)
     {
-        //Mapping StorageWriteOffRequest to WriteOff and WriteOffProductListRequest to ProductList
-        var writeOffMap = _mapper.Map<WriteOff>(writeOff);
-        if(writeOffMap == null)
-            return (false, "Mapping failed, object is null");
-        var productListMap = _mapper.Map<List<ProductList>>(writeOff.ProductList);
-        if(productListMap == null)
-            return (false, "Mapping failed, object is null");
-        
-        //Change required fields
-        foreach (var product in productListMap)
+        try
         {
-            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
-            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
-            var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name); 
-            var dishProductListResult = await _dishService.GetProductListByName(product.Name); 
-            if (primeCostIngredientResult.IsSuccess)
+            //Mapping StorageWriteOffRequest to WriteOff and WriteOffProductListRequest to ProductList
+            var writeOffMap = _mapper.Map<WriteOff>(writeOff);
+            if (writeOffMap == null)
+                return (false, "Mapping failed, object is null");
+
+            var productListMap = _mapper.Map<List<ProductList>>(writeOff.ProductList);
+            if (productListMap == null)
+                return (false, "Mapping failed, object is null");
+
+            //Change required fields
+            foreach (var product in productListMap)
             {
-                product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
-            }
-            else if (primeCostProductResult.IsSuccess)
-            {
-                product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
-            }
-            else if (primeCostSemiProductResult.IsSuccess)
-            {
-                product.Price = (decimal)product.Count * primeCostSemiProductResult.PrimeCost;
-            }
-            else if (dishProductListResult.IsSuccess)
-            {
-                decimal sum = 0;
-                foreach (var prod in dishProductListResult.ProductList)
+                var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+                var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name);
+                var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name);
+                var dishProductListResult = await _dishService.GetProductListByName(product.Name);
+                if (primeCostIngredientResult.IsSuccess)
                 {
-                    sum += prod.PrimeCost;
+                    product.Price = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
                 }
-                
-                product.Price = (decimal)product.Count * sum;
+                else if (primeCostProductResult.IsSuccess)
+                {
+                    product.Price = (decimal)product.Count * primeCostProductResult.PrimeCost;
+                }
+                else if (primeCostSemiProductResult.IsSuccess)
+                {
+                    product.Price = (decimal)product.Count * primeCostSemiProductResult.PrimeCost;
+                }
+                else if (dishProductListResult.IsSuccess)
+                {
+                    decimal sum = 0;
+                    foreach (var prod in dishProductListResult.ProductList)
+                    {
+                        sum += prod.PrimeCost;
+                    }
+
+                    product.Price = (decimal)product.Count * sum;
+                }
+                else
+                {
+                    return (false, "There is no Ingredient or Product with this name");
+                }
             }
-            else
-            {
-                return (false, "There is no Ingredient or Product with this name");
-            }
+
+            //Get Write Off Cause Id by Name
+            var writeOffCauseIdResult = await _writeOffCauseService.GetIdByName(writeOff.Cause);
+            if (!writeOffCauseIdResult.IsSuccess)
+                return (false, writeOffCauseIdResult.ErrorMessage);
+
+            //Get User by Login
+            var user = await _userService.GetUserByLogin(userLogin);
+            if (!user.IsSuccess)
+                return (false, user.ErrorMessage);
+            //Change required properties
+            writeOffMap.UserId = user.User.Id;
+            writeOffMap.UserName = user.User.FullName;
+            writeOffMap.CauseId = writeOffCauseIdResult.Id;
+            writeOffMap.ProductLists = productListMap;
+            //Call the DAL update service
+            var updateWriteOff = await _writeOffService.CreateWriteOffAsync(writeOffMap);
+            if (!updateWriteOff.IsSuccess)
+                return (false, updateWriteOff.ErrorMessage);
+
+            return (true, string.Empty);
         }
-        
-        //Get Write Off Cause Id by Name
-        var writeOffCauseIdResult = await _writeOffCauseService.GetIdByName(writeOff.Cause);
-        if (!writeOffCauseIdResult.IsSuccess)
-            return (false, writeOffCauseIdResult.ErrorMessage);
-
-        //Get User by Login
-        var user = await _userService.GetUserByLogin(userLogin);
-        if (!user.IsSuccess)
-            return (false, user.ErrorMessage);
-        //Change required properties
-        writeOffMap.UserId = user.User.Id;
-        writeOffMap.UserName = user.User.FullName;
-        writeOffMap.CauseId = writeOffCauseIdResult.Id;
-        writeOffMap.ProductLists = productListMap;
-        //Call the DAL update service
-        var updateWriteOff = await _writeOffService.CreateWriteOffAsync(writeOffMap);
-        if (!updateWriteOff.IsSuccess)
-            return (false, updateWriteOff.ErrorMessage);
-
-        return (true, string.Empty);
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffAsync(int writeOffId)
     {
-        var deletedWriteOff = await _writeOffService.DeleteWriteOffAsync(writeOffId);
-        if (!deletedWriteOff.IsSuccess)
-            return (false, deletedWriteOff.ErrorMessage);
+        try
+        {
+            var deletedWriteOff = await _writeOffService.DeleteWriteOffAsync(writeOffId);
+            if (!deletedWriteOff.IsSuccess)
+                return (false, deletedWriteOff.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<StorageWriteOffCauseResponse> AllWriteOffCauses)> GetAllWriteOffCausesAsync()
     {
-        //Get Suppliers
-        var writeOffCauses = await _writeOffCauseService.GetAllWriteOffCausesAsync();
-        if (!writeOffCauses.IsSuccess)
-            return (false, writeOffCauses.ErrorMessage, new List<StorageWriteOffCauseResponse>());
-
-        //Map Product Categories
-        var writeOffCausesMap = _mapper.Map<List<StorageWriteOffCauseResponse>>(writeOffCauses.WriteOffCauseList);
-        if (writeOffCausesMap == null)
-            return (false, "Mapping failed, object is null", new List<StorageWriteOffCauseResponse>());
-
-        foreach (var writeOffCauseResponse in writeOffCausesMap)
+        try
         {
-            foreach (var writeOff in writeOffCauses.WriteOffCauseList.Where(wr => wr.Id == writeOffCauseResponse.Id))
+            //Get Suppliers
+            var writeOffCauses = await _writeOffCauseService.GetAllWriteOffCausesAsync();
+            if (!writeOffCauses.IsSuccess)
+                return (false, writeOffCauses.ErrorMessage, new List<StorageWriteOffCauseResponse>());
+
+            //Map Product Categories
+            var writeOffCausesMap = _mapper.Map<List<StorageWriteOffCauseResponse>>(writeOffCauses.WriteOffCauseList);
+            if (writeOffCausesMap == null)
+                return (false, "Mapping failed, object is null", new List<StorageWriteOffCauseResponse>());
+
+            foreach (var writeOffCauseResponse in writeOffCausesMap)
             {
-                decimal writeOffSum = 0;
-                foreach (var wrOff in writeOff.WriteOffs)
+                foreach (var writeOff in
+                         writeOffCauses.WriteOffCauseList.Where(wr => wr.Id == writeOffCauseResponse.Id))
                 {
-                    var sum = GetSum(wrOff.ProductLists);
-                    if (!sum.IsSuccess)
-                        return (false, sum.ErrorMessage, new List<StorageWriteOffCauseResponse>());
+                    decimal writeOffSum = 0;
+                    foreach (var wrOff in writeOff.WriteOffs)
+                    {
+                        var sum = GetSum(wrOff.ProductLists);
+                        if (!sum.IsSuccess)
+                            return (false, sum.ErrorMessage, new List<StorageWriteOffCauseResponse>());
 
-                    writeOffSum += sum.Sum;
+                        writeOffSum += sum.Sum;
+                    }
+
+                    writeOffCauseResponse.WriteOffCount = writeOff.WriteOffs.Count;
+                    writeOffCauseResponse.WriteOffSum = writeOffSum;
                 }
-                writeOffCauseResponse.WriteOffCount = writeOff.WriteOffs.Count;
-                writeOffCauseResponse.WriteOffSum = writeOffSum;
             }
-        }
 
-        return (true, string.Empty, writeOffCausesMap);
+            return (true, string.Empty, writeOffCausesMap);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<StorageWriteOffCauseResponse>());
+        }
     }
     
     public async Task<(bool IsSuccess, string ErrorMessage)> AddWriteOffCauseAsync(StorageWriteOffCauseRequest writeOffCause)
     {
-        //Map Product Category
-        var writeOffCauseMap = _mapper.Map<WriteOffCause>(writeOffCause);
-        if (writeOffCauseMap == null)
-            return (false, "Mapping failed, object is null");
-        
-        //Call the DAL update service
-        var addWriteOffCause = await _writeOffCauseService.CreateWriteOffCauseAsync(writeOffCauseMap);
-        if (!addWriteOffCause.IsSuccess)
-            return (false, addWriteOffCause.ErrorMessage);
+        try
+        {
+            //Map Product Category
+            var writeOffCauseMap = _mapper.Map<WriteOffCause>(writeOffCause);
+            if (writeOffCauseMap == null)
+                return (false, "Mapping failed, object is null");
 
-        return (true, string.Empty);
+            //Call the DAL update service
+            var addWriteOffCause = await _writeOffCauseService.CreateWriteOffCauseAsync(writeOffCauseMap);
+            if (!addWriteOffCause.IsSuccess)
+                return (false, addWriteOffCause.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
     
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteWriteOffCauseAsync(int writeOffCauseId)
     {
-        var deletedWriteOffCause = await _writeOffCauseService.DeleteWriteOffCauseAsync(writeOffCauseId);
-        if (!deletedWriteOffCause.IsSuccess)
-            return (false, deletedWriteOffCause.ErrorMessage);
+        try
+        {
+            var deletedWriteOffCause = await _writeOffCauseService.DeleteWriteOffCauseAsync(writeOffCauseId);
+            if (!deletedWriteOffCause.IsSuccess)
+                return (false, deletedWriteOffCause.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
     public async Task<(bool IsSuccess, string ErrorMessage, List<StorageSupplierResponse> AllSuppliers)> GetAllSuppliersAsync()
     {
-        //Get Suppliers
-        var suppliers = await _supplierService.GetAllSuppliersAsync();
-        if (!suppliers.IsSuccess)
-            return (false, suppliers.ErrorMessage, new List<StorageSupplierResponse>());
-
-        //Map Product Categories
-        var suppliersMap = _mapper.Map<List<StorageSupplierResponse>>(suppliers.SupplierList);
-        if (suppliersMap == null)
-            return (false, "Mapping failed, object is null", new List<StorageSupplierResponse>());
-
-        foreach (var supplierResponse in suppliersMap)
+        try
         {
-            foreach (var supplier in suppliers.SupplierList.Where(supply => supply.Id == supplierResponse.Id))
+            //Get Suppliers
+            var suppliers = await _supplierService.GetAllSuppliersAsync();
+            if (!suppliers.IsSuccess)
+                return (false, suppliers.ErrorMessage, new List<StorageSupplierResponse>());
+
+            //Map Product Categories
+            var suppliersMap = _mapper.Map<List<StorageSupplierResponse>>(suppliers.SupplierList);
+            if (suppliersMap == null)
+                return (false, "Mapping failed, object is null", new List<StorageSupplierResponse>());
+
+            foreach (var supplierResponse in suppliersMap)
             {
-                decimal suppliesSum = 0;
-                foreach (var suply in supplier.Supplies)
+                foreach (var supplier in suppliers.SupplierList.Where(supply => supply.Id == supplierResponse.Id))
                 {
-                    var sum = GetSum(suply.ProductLists);
-                    if (!sum.IsSuccess)
-                        return (false, sum.ErrorMessage, new List<StorageSupplierResponse>());
+                    decimal suppliesSum = 0;
+                    foreach (var suply in supplier.Supplies)
+                    {
+                        var sum = GetSum(suply.ProductLists);
+                        if (!sum.IsSuccess)
+                            return (false, sum.ErrorMessage, new List<StorageSupplierResponse>());
 
-                    suppliesSum += sum.Sum;
+                        suppliesSum += sum.Sum;
+                    }
+
+                    supplierResponse.SuppliesCount = supplier.Supplies.Count;
+                    supplierResponse.SupplySum = suppliesSum;
                 }
-                supplierResponse.SuppliesCount = supplier.Supplies.Count;
-                supplierResponse.SupplySum = suppliesSum;
             }
-        }
 
-        return (true, string.Empty, suppliersMap);
+            return (true, string.Empty, suppliersMap);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<StorageSupplierResponse>());
+        }
     }
     
     public async Task<(bool IsSuccess, string ErrorMessage)> AddSupplierAsync(StorageSupplierRequest supplier)
     {
-        //Map Product Category
-        var supplierMap = _mapper.Map<Supplier>(supplier);
-        if (supplierMap == null)
-            return (false, "Mapping failed, object is null");
-        
-        //Call the DAL update service
-        var addSupplier = await _supplierService.CreateSupplierAsync(supplierMap);
-        if (!addSupplier.IsSuccess)
-            return (false, addSupplier.ErrorMessage);
+        try
+        {
+            //Map Product Category
+            var supplierMap = _mapper.Map<Supplier>(supplier);
+            if (supplierMap == null)
+                return (false, "Mapping failed, object is null");
 
-        return (true, string.Empty);
+            //Call the DAL update service
+            var addSupplier = await _supplierService.CreateSupplierAsync(supplierMap);
+            if (!addSupplier.IsSuccess)
+                return (false, addSupplier.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
     
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteSupplierAsync(int supplierId)
     {
-        var deletedSupplier = await _supplierService.DeleteSupplierAsync(supplierId);
-        if (!deletedSupplier.IsSuccess)
-            return (false, deletedSupplier.ErrorMessage);
+        try
+        {
+            var deletedSupplier = await _supplierService.DeleteSupplierAsync(supplierId);
+            if (!deletedSupplier.IsSuccess)
+                return (false, deletedSupplier.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
     
     //Static method to Get Sum of products in ProductLists

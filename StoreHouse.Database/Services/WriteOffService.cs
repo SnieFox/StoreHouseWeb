@@ -117,6 +117,7 @@ public class WriteOffService : IWriteOffService
         {
             var writeOffs = await _context.WriteOffs
                 .Include(w => w.ProductLists)
+                .Include(w => w.WriteOffCause)
                 .ToListAsync();
 
             return (true, string.Empty, writeOffs);

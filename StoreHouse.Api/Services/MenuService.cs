@@ -30,337 +30,422 @@ public class MenuService : IMenuService
     
     public async Task<(bool IsSuccess, string ErrorMessage, List<MenuProductResponse> AllProducts)> GetAllProductsAsync()
     {
-        //Get All Products
-        var products = await _productService.GetAllProductsAsync();
-        if (!products.IsSuccess)
-            return (false, products.ErrorMessage, new List<MenuProductResponse>());
+        try
+        {
+            //Get All Products
+            var products = await _productService.GetAllProductsAsync();
+            if (!products.IsSuccess)
+                return (false, products.ErrorMessage, new List<MenuProductResponse>());
 
-        //Mapping Products
-        var productMap = _mapper.Map<List<MenuProductResponse>>(products.ProductList);
-        if (productMap == null)
-            return (false, "Mapping failed, object is null", new List<MenuProductResponse>());
-        
-        return (true, string.Empty, productMap);
+            //Mapping Products
+            var productMap = _mapper.Map<List<MenuProductResponse>>(products.ProductList);
+            if (productMap == null)
+                return (false, "Mapping failed, object is null", new List<MenuProductResponse>());
+
+            return (true, string.Empty, productMap);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<MenuProductResponse>());
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateProductAsync(MenuProductRequest updatedProduct)
     {
-        //Mapping Products
-        var productMap = _mapper.Map<Product>(updatedProduct);
-        if (productMap == null)
-            return (false, "Mapping failed, object is null", updatedProduct.Id);
-        
-        //Change Required Data
-        var categoryId = await _productCategoryService.GetCategoryIdByNameAsync(updatedProduct.CategoryName);
-        if (!categoryId.IsSuccess)
-            return (false, categoryId.ErrorMessage, -1);
+        try
+        {
+            //Mapping Products
+            var productMap = _mapper.Map<Product>(updatedProduct);
+            if (productMap == null)
+                return (false, "Mapping failed, object is null", updatedProduct.Id);
 
-        productMap.CategoryId = categoryId.CategoryId;
-        
-        //Call the DAL update service
-        var updateProduct = await _productService.UpdateProductAsync(productMap);
-        if (!updateProduct.IsSuccess)
-            return (false, updateProduct.ErrorMessage, -1);
+            //Change Required Data
+            var categoryId = await _productCategoryService.GetCategoryIdByNameAsync(updatedProduct.CategoryName);
+            if (!categoryId.IsSuccess)
+                return (false, categoryId.ErrorMessage, -1);
 
-        return (true, string.Empty, updatedProduct.Id);
+            productMap.CategoryId = categoryId.CategoryId;
+
+            //Call the DAL update service
+            var updateProduct = await _productService.UpdateProductAsync(productMap);
+            if (!updateProduct.IsSuccess)
+                return (false, updateProduct.ErrorMessage, -1);
+
+            return (true, string.Empty, updatedProduct.Id);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, -1);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddProductAsync(MenuProductRequest product)
     {
-        //Mapping Products
-        var productMap = _mapper.Map<Product>(product);
-        if (productMap == null)
-            return (false, "Mapping failed, object is null");
-        
-        //Change Required Data
-        var categoryId = await _productCategoryService.GetCategoryIdByNameAsync(product.CategoryName);
-        if (!categoryId.IsSuccess)
-            return (false, categoryId.ErrorMessage);
+        try
+        {
+            //Mapping Products
+            var productMap = _mapper.Map<Product>(product);
+            if (productMap == null)
+                return (false, "Mapping failed, object is null");
 
-        productMap.CategoryId = categoryId.CategoryId;
-        
-        //Call the DAL update service
-        var addProduct = await _productService.CreateProductAsync(productMap);
-        if (!addProduct.IsSuccess)
-            return (false, addProduct.ErrorMessage);
+            //Change Required Data
+            var categoryId = await _productCategoryService.GetCategoryIdByNameAsync(product.CategoryName);
+            if (!categoryId.IsSuccess)
+                return (false, categoryId.ErrorMessage);
 
-        return (true, string.Empty);
+            productMap.CategoryId = categoryId.CategoryId;
+
+            //Call the DAL update service
+            var addProduct = await _productService.CreateProductAsync(productMap);
+            if (!addProduct.IsSuccess)
+                return (false, addProduct.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteProductAsync(int productId)
     {
-        var deletedProduct = await _productService.DeleteProductAsync(productId);
-        if (!deletedProduct.IsSuccess)
-            return (false, deletedProduct.ErrorMessage);
+        try
+        {
+            var deletedProduct = await _productService.DeleteProductAsync(productId);
+            if (!deletedProduct.IsSuccess)
+                return (false, deletedProduct.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<MenuDishResponse> AllDishes)> GetAllDishesAsync()
     {
-        //Get All Dishes
-        var dishes = await _dishService.GetAllDishesAsync();
-        if (!dishes.IsSuccess)
-            return (false, dishes.ErrorMessage, new List<MenuDishResponse>());
-
-        //Mapping Dishes and Product List
-        var dishMap = _mapper.Map<List<MenuDishResponse>>(dishes.DishList);
-        if (dishMap == null)
-            return (false, "Mapping failed, object is null", new List<MenuDishResponse>());
-        foreach (var dishResponse in dishMap)
+        try
         {
-            foreach (var dish in dishes.DishList.Where(d => d.Id == dishResponse.Id))
+            //Get All Dishes
+            var dishes = await _dishService.GetAllDishesAsync();
+            if (!dishes.IsSuccess)
+                return (false, dishes.ErrorMessage, new List<MenuDishResponse>());
+
+            //Mapping Dishes and Product List
+            var dishMap = _mapper.Map<List<MenuDishResponse>>(dishes.DishList);
+            if (dishMap == null)
+                return (false, "Mapping failed, object is null", new List<MenuDishResponse>());
+            foreach (var dishResponse in dishMap)
             {
-                var productListMap = _mapper.Map<List<MenuProductListResponse>>(dish.ProductLists);
-                if (productListMap == null)
-                    return (false, "Mapping failed, object is null", new List<MenuDishResponse>());
-                var weight = GetWeight(dish.ProductLists);
-                if (!weight.IsSuccess)
-                    return (false, weight.ErrorMessage, new List<MenuDishResponse>());
-                var primeCost = GetPrimeCost(dish.ProductLists);
-                if (!primeCost.IsSuccess)
-                    return (false, primeCost.ErrorMessage, new List<MenuDishResponse>());
-                
-                dishResponse.ProductList = productListMap;
-                dishResponse.Weight = weight.Weight;
-                dishResponse.PrimeCost = primeCost.PrimeCost;
+                foreach (var dish in dishes.DishList.Where(d => d.Id == dishResponse.Id))
+                {
+                    var productListMap = _mapper.Map<List<MenuProductListResponse>>(dish.ProductLists);
+                    if (productListMap == null)
+                        return (false, "Mapping failed, object is null", new List<MenuDishResponse>());
+                    var weight = GetWeight(dish.ProductLists);
+                    if (!weight.IsSuccess)
+                        return (false, weight.ErrorMessage, new List<MenuDishResponse>());
+                    var primeCost = GetPrimeCost(dish.ProductLists);
+                    if (!primeCost.IsSuccess)
+                        return (false, primeCost.ErrorMessage, new List<MenuDishResponse>());
+
+                    dishResponse.ProductList = productListMap;
+                    dishResponse.Weight = weight.Weight;
+                    dishResponse.PrimeCost = primeCost.PrimeCost;
+                }
             }
+
+            return (true, string.Empty, dishMap);
         }
-        
-        return (true, string.Empty, dishMap);
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<MenuDishResponse>());
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateDishAsync(MenuDishRequest updatedDish)
     {
-        //Mapping Products
-        var dishMap = _mapper.Map<Dish>(updatedDish);
-        if (dishMap == null)
-            return (false, "Mapping failed, object is null", updatedDish.Id);
-        var productListMap = _mapper.Map<List<ProductList>>(updatedDish.ProductList);
-        if (productListMap == null)
-            return (false, "Mapping failed, object is null", updatedDish.Id);
-        
-        //Change Required Data
-        var categoryId = await _productCategoryService.GetCategoryIdByNameAsync(updatedDish.CategoryName);
-        if (!categoryId.IsSuccess)
-            return (false, categoryId.ErrorMessage, -1);
-
-        foreach (var product in productListMap)
+        try
         {
-            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
-            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
-            var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name); 
-            var dishProductListResult = await _dishService.GetProductListByName(product.Name); 
-            if (primeCostIngredientResult.IsSuccess)
+            //Mapping Products
+            var dishMap = _mapper.Map<Dish>(updatedDish);
+            if (dishMap == null)
+                return (false, "Mapping failed, object is null", updatedDish.Id);
+            var productListMap = _mapper.Map<List<ProductList>>(updatedDish.ProductList);
+            if (productListMap == null)
+                return (false, "Mapping failed, object is null", updatedDish.Id);
+
+            //Change Required Data
+            var categoryId = await _productCategoryService.GetCategoryIdByNameAsync(updatedDish.CategoryName);
+            if (!categoryId.IsSuccess)
+                return (false, categoryId.ErrorMessage, -1);
+
+            foreach (var product in productListMap)
             {
-                product.PrimeCost = primeCostIngredientResult.PrimeCost;
-            }
-            else if (primeCostProductResult.IsSuccess)
-            {
-                product.PrimeCost = primeCostProductResult.PrimeCost;
-            }
-            else if (primeCostSemiProductResult.IsSuccess)
-            {
-                product.PrimeCost = primeCostSemiProductResult.PrimeCost;
-            }
-            else if (dishProductListResult.IsSuccess)
-            {
-                decimal sum = 0;
-                foreach (var prod in dishProductListResult.ProductList)
+                var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+                var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name);
+                var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name);
+                var dishProductListResult = await _dishService.GetProductListByName(product.Name);
+                if (primeCostIngredientResult.IsSuccess)
                 {
-                    sum += prod.PrimeCost;
+                    product.PrimeCost = primeCostIngredientResult.PrimeCost;
                 }
-                
-                product.PrimeCost = sum;
+                else if (primeCostProductResult.IsSuccess)
+                {
+                    product.PrimeCost = primeCostProductResult.PrimeCost;
+                }
+                else if (primeCostSemiProductResult.IsSuccess)
+                {
+                    product.PrimeCost = primeCostSemiProductResult.PrimeCost;
+                }
+                else if (dishProductListResult.IsSuccess)
+                {
+                    decimal sum = 0;
+                    foreach (var prod in dishProductListResult.ProductList)
+                    {
+                        sum += prod.PrimeCost;
+                    }
+
+                    product.PrimeCost = sum;
+                }
+
+                return (false, "There is no Ingredient or Product with this name", -1);
             }
 
-            return (false, "There is no Ingredient or Product with this name", -1);
+            dishMap.ProductLists = productListMap;
+            dishMap.CategoryId = categoryId.CategoryId;
+
+            //Call the DAL update service
+            var updateDish = await _dishService.UpdateDishAsync(dishMap);
+            if (!updateDish.IsSuccess)
+                return (false, updateDish.ErrorMessage, -1);
+
+            return (true, string.Empty, updatedDish.Id);
         }
-
-        dishMap.ProductLists = productListMap;
-        dishMap.CategoryId = categoryId.CategoryId;
-        
-        //Call the DAL update service
-        var updateDish = await _dishService.UpdateDishAsync(dishMap);
-        if (!updateDish.IsSuccess)
-            return (false, updateDish.ErrorMessage, -1);
-
-        return (true, string.Empty, updatedDish.Id);
+        catch (Exception e)
+        {
+            return (false, e.Message, -1);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddDishAsync(MenuDishRequest dish)
     {
-        //Mapping Products
-        var dishMap = _mapper.Map<Dish>(dish);
-        if (dishMap == null)
-            return (false, "Mapping failed, object is null");
-        var productListMap = _mapper.Map<List<ProductList>>(dish.ProductList);
-        if (productListMap == null)
-            return (false, "Mapping failed, object is null");
-        
-        //Change Required Data
-        var categoryId = await _productCategoryService.GetCategoryIdByNameAsync(dish.CategoryName);
-        if (!categoryId.IsSuccess)
-            return (false, categoryId.ErrorMessage);
-
-        foreach (var product in productListMap)
+        try
         {
-            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
-            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
-            var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name); 
-            var dishProductListResult = await _dishService.GetProductListByName(product.Name); 
-            if (primeCostIngredientResult.IsSuccess)
+            //Mapping Products
+            var dishMap = _mapper.Map<Dish>(dish);
+            if (dishMap == null)
+                return (false, "Mapping failed, object is null");
+            var productListMap = _mapper.Map<List<ProductList>>(dish.ProductList);
+            if (productListMap == null)
+                return (false, "Mapping failed, object is null");
+
+            //Change Required Data
+            var categoryId = await _productCategoryService.GetCategoryIdByNameAsync(dish.CategoryName);
+            if (!categoryId.IsSuccess)
+                return (false, categoryId.ErrorMessage);
+
+            foreach (var product in productListMap)
             {
-                product.PrimeCost = primeCostIngredientResult.PrimeCost;
-            }
-            else if (primeCostProductResult.IsSuccess)
-            {
-                product.PrimeCost = primeCostProductResult.PrimeCost;
-            }
-            else if (primeCostSemiProductResult.IsSuccess)
-            {
-                product.PrimeCost = primeCostSemiProductResult.PrimeCost;
-            }
-            else if (dishProductListResult.IsSuccess)
-            {
-                decimal sum = 0;
-                foreach (var prod in dishProductListResult.ProductList)
+                var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+                var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name);
+                var primeCostSemiProductResult = await _semiProductService.GetPrimeCostByName(product.Name);
+                var dishProductListResult = await _dishService.GetProductListByName(product.Name);
+                if (primeCostIngredientResult.IsSuccess)
                 {
-                    sum += prod.PrimeCost;
+                    product.PrimeCost = primeCostIngredientResult.PrimeCost;
                 }
-                
-                product.PrimeCost = sum;
+                else if (primeCostProductResult.IsSuccess)
+                {
+                    product.PrimeCost = primeCostProductResult.PrimeCost;
+                }
+                else if (primeCostSemiProductResult.IsSuccess)
+                {
+                    product.PrimeCost = primeCostSemiProductResult.PrimeCost;
+                }
+                else if (dishProductListResult.IsSuccess)
+                {
+                    decimal sum = 0;
+                    foreach (var prod in dishProductListResult.ProductList)
+                    {
+                        sum += prod.PrimeCost;
+                    }
+
+                    product.PrimeCost = sum;
+                }
+                else
+                {
+                    return (false, "There is no Ingredient or Product with this name");
+                }
             }
-            else
-            {
-                return (false, "There is no Ingredient or Product with this name");
-            }
+
+            dishMap.ProductLists = productListMap;
+            dishMap.CategoryId = categoryId.CategoryId;
+
+            //Call the DAL update service
+            var addDish = await _dishService.CreateDishAsync(dishMap);
+            if (!addDish.IsSuccess)
+                return (false, addDish.ErrorMessage);
+
+            return (true, string.Empty);
         }
-
-        dishMap.ProductLists = productListMap;
-        dishMap.CategoryId = categoryId.CategoryId;
-        
-        //Call the DAL update service
-        var addDish = await _dishService.CreateDishAsync(dishMap);
-        if (!addDish.IsSuccess)
-            return (false, addDish.ErrorMessage);
-
-        return (true, string.Empty);
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteDishAsync(int dishId)
     {
-        var deletedDish = await _dishService.DeleteDishAsync(dishId);
-        if (!deletedDish.IsSuccess)
-            return (false, deletedDish.ErrorMessage);
+        try
+        {
+            var deletedDish = await _dishService.DeleteDishAsync(dishId);
+            if (!deletedDish.IsSuccess)
+                return (false, deletedDish.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<MenuSemiProductResponse> AllSemiProducts)> GetAllSemiProductsAsync()
     {
-        //Get All Dishes
-        var semiProducts = await _semiProductService.GetAllSemiProductsAsync();
-        if (!semiProducts.IsSuccess)
-            return (false, semiProducts.ErrorMessage, new List<MenuSemiProductResponse>());
-
-        //Mapping Dishes and Product List
-        var semiProductsMap = _mapper.Map<List<MenuSemiProductResponse>>(semiProducts.SemiProductList);
-        if (semiProductsMap == null)
-            return (false, "Mapping failed, object is null", new List<MenuSemiProductResponse>());
-        foreach (var semiProductsResponse in semiProductsMap)
+        try
         {
-            foreach (var semiProduct in semiProducts.SemiProductList.Where(d => d.Id == semiProductsResponse.Id))
+            //Get All Dishes
+            var semiProducts = await _semiProductService.GetAllSemiProductsAsync();
+            if (!semiProducts.IsSuccess)
+                return (false, semiProducts.ErrorMessage, new List<MenuSemiProductResponse>());
+
+            //Mapping Dishes and Product List
+            var semiProductsMap = _mapper.Map<List<MenuSemiProductResponse>>(semiProducts.SemiProductList);
+            if (semiProductsMap == null)
+                return (false, "Mapping failed, object is null", new List<MenuSemiProductResponse>());
+            foreach (var semiProductsResponse in semiProductsMap)
             {
-                var productListMap = _mapper.Map<List<MenuProductListResponse>>(semiProduct.ProductLists);
-                if (productListMap == null)
-                    return (false, "Mapping failed, object is null", new List<MenuSemiProductResponse>());
-               
-                semiProductsResponse.ProductList = productListMap;
+                foreach (var semiProduct in semiProducts.SemiProductList.Where(d => d.Id == semiProductsResponse.Id))
+                {
+                    var productListMap = _mapper.Map<List<MenuProductListResponse>>(semiProduct.ProductLists);
+                    if (productListMap == null)
+                        return (false, "Mapping failed, object is null", new List<MenuSemiProductResponse>());
+
+                    semiProductsResponse.ProductList = productListMap;
+                }
             }
+
+            return (true, string.Empty, semiProductsMap);
         }
-        
-        return (true, string.Empty, semiProductsMap);
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<MenuSemiProductResponse>());
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateSemiProductAsync(MenuSemiProductRequest updatedSemiProduct)
     {
-        //Mapping Products
-        var semiProductMap = _mapper.Map<SemiProduct>(updatedSemiProduct);
-        if (semiProductMap == null)
-            return (false, "Mapping failed, object is null", updatedSemiProduct.Id);
-        var productListMap = _mapper.Map<List<ProductList>>(updatedSemiProduct.ProductList);
-        if (productListMap == null)
-            return (false, "Mapping failed, object is null", updatedSemiProduct.Id);
-        
-        //Change Required Data
-        foreach (var product in productListMap)
+        try
         {
-            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
-            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
-            if (primeCostIngredientResult.IsSuccess)
+            //Mapping Products
+            var semiProductMap = _mapper.Map<SemiProduct>(updatedSemiProduct);
+            if (semiProductMap == null)
+                return (false, "Mapping failed, object is null", updatedSemiProduct.Id);
+            var productListMap = _mapper.Map<List<ProductList>>(updatedSemiProduct.ProductList);
+            if (productListMap == null)
+                return (false, "Mapping failed, object is null", updatedSemiProduct.Id);
+
+            //Change Required Data
+            foreach (var product in productListMap)
             {
-                product.PrimeCost = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
-            }
-            else if (primeCostProductResult.IsSuccess)
-            {
-                product.PrimeCost = (decimal)product.Count * primeCostProductResult.PrimeCost;
+                var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+                var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name);
+                if (primeCostIngredientResult.IsSuccess)
+                {
+                    product.PrimeCost = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
+                    semiProductMap.Output += product.Count;
+                }
+                else if (primeCostProductResult.IsSuccess)
+                {
+                    product.PrimeCost = (decimal)product.Count * primeCostProductResult.PrimeCost;
+                    semiProductMap.Output += product.Count;
+                }
+                else
+                {
+                    return (false, "There is no Ingredient or Product with this name", -1);
+                }
             }
 
-            return (false, "There is no Ingredient or Product with this name", -1);
+            if (semiProductMap.Output < 1 || semiProductMap.Output > 1.0009)
+                return (false, "semi-product should be made up per 1 kg of finished product", -1);
+            semiProductMap.ProductLists = productListMap;
+
+            //Call the DAL update service
+            var updateSemiProduct = await _semiProductService.UpdateSemiProductAsync(semiProductMap);
+            if (!updateSemiProduct.IsSuccess)
+                return (false, updateSemiProduct.ErrorMessage, -1);
+
+            return (true, string.Empty, updatedSemiProduct.Id);
         }
-
-        semiProductMap.ProductLists = productListMap;
-        
-        //Call the DAL update service
-        var updateSemiProduct = await _semiProductService.UpdateSemiProductAsync(semiProductMap);
-        if (!updateSemiProduct.IsSuccess)
-            return (false, updateSemiProduct.ErrorMessage, -1);
-
-        return (true, string.Empty, updatedSemiProduct.Id);
+        catch (Exception e)
+        {
+            return (false, e.Message, -1);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddSemiProductAsync(MenuSemiProductRequest semiProduct)
     {
-        //Mapping Products
-        var semiProductMap = _mapper.Map<SemiProduct>(semiProduct);
-        if (semiProductMap == null)
-            return (false, "Mapping failed, object is null");
-        var productListMap = _mapper.Map<List<ProductList>>(semiProduct.ProductList);
-        if (productListMap == null)
-            return (false, "Mapping failed, object is null");
-        
-        //Change Required Data
-        foreach (var product in productListMap)
+        try
         {
-            var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
-            var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name); 
-            if (primeCostIngredientResult.IsSuccess)
+            //Mapping Products
+            var semiProductMap = _mapper.Map<SemiProduct>(semiProduct);
+            if (semiProductMap == null)
+                return (false, "Mapping failed, object is null");
+            var productListMap = _mapper.Map<List<ProductList>>(semiProduct.ProductList);
+            if (productListMap == null)
+                return (false, "Mapping failed, object is null");
+
+            //Change Required Data
+            foreach (var product in productListMap)
             {
-                product.PrimeCost = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
-                semiProductMap.PrimeCost += product.PrimeCost;
-                semiProductMap.Output += product.Count;
+                var primeCostIngredientResult = await _ingredientService.GetPrimeCostByName(product.Name);
+                var primeCostProductResult = await _productService.GetPrimeCostByName(product.Name);
+                if (primeCostIngredientResult.IsSuccess)
+                {
+                    product.PrimeCost = (decimal)product.Count * primeCostIngredientResult.PrimeCost;
+                    semiProductMap.PrimeCost += product.PrimeCost;
+                    semiProductMap.Output += product.Count;
+                }
+                else if (primeCostProductResult.IsSuccess)
+                {
+                    product.PrimeCost = (decimal)product.Count * primeCostProductResult.PrimeCost;
+                    semiProductMap.PrimeCost += product.PrimeCost;
+                    semiProductMap.Output += product.Count;
+                }
+                else
+                {
+                    return (false, "There is no Ingredient or Product with this name");
+                }
             }
-            else if (primeCostProductResult.IsSuccess)
-            {
-                product.PrimeCost = (decimal)product.Count * primeCostProductResult.PrimeCost;
-                semiProductMap.PrimeCost += product.PrimeCost;
-                semiProductMap.Output += product.Count;
-            }
-            else
-            {
-                return (false, "There is no Ingredient or Product with this name");
-            }
+
+            if (semiProductMap.Output < 0.9998 && semiProductMap.Output > 1.0009)
+                return (false, "semi-product should be made up per 1 kg of finished product");
+            semiProductMap.ProductLists = productListMap;
+
+            //Call the DAL update service
+            var addSemiProduct = await _semiProductService.CreateSemiProductAsync(semiProductMap);
+            if (!addSemiProduct.IsSuccess)
+                return (false, addSemiProduct.ErrorMessage);
+
+            return (true, string.Empty);
         }
-
-        semiProductMap.ProductLists = productListMap;
-        
-        //Call the DAL update service
-        var addSemiProduct = await _semiProductService.CreateSemiProductAsync(semiProductMap);
-        if (!addSemiProduct.IsSuccess)
-            return (false, addSemiProduct.ErrorMessage);
-
-        return (true, string.Empty);
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteSemiProductAsync(int semiProductId)
@@ -414,161 +499,243 @@ public class MenuService : IMenuService
 
     public async Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateIngredientAsync(MenuIngredientUpdateRequest updatedIngredient)
     {
-        //Mapping Ingredients
-        var ingredientMap = _mapper.Map<Ingredient>(updatedIngredient);
-        if (ingredientMap == null)
-            return (false, "Mapping failed, object is null", updatedIngredient.Id);
+        try
+        {
+            //Mapping Ingredients
+            var ingredientMap = _mapper.Map<Ingredient>(updatedIngredient);
+            if (ingredientMap == null)
+                return (false, "Mapping failed, object is null", updatedIngredient.Id);
 
-        var categoryId = await _ingredientCategoryService.GetCategoryIdByName(updatedIngredient.CategoryName);
-        if(!categoryId.IsSuccess)
-            return (false, categoryId.ErrorMessage, -1);
+            var categoryId = await _ingredientCategoryService.GetCategoryIdByName(updatedIngredient.CategoryName);
+            if (!categoryId.IsSuccess)
+                return (false, categoryId.ErrorMessage, -1);
 
-        ingredientMap.CategoryId = categoryId.CategoryId;
-        
-        //Call the DAL update service
-        var updateIngredient = await _ingredientService.UpdateIngredientAsync(ingredientMap);
-        if (!updateIngredient.IsSuccess)
-            return (false, updateIngredient.ErrorMessage, -1);
+            ingredientMap.CategoryId = categoryId.CategoryId;
 
-        return (true, string.Empty, updatedIngredient.Id);
+            //Call the DAL update service
+            var updateIngredient = await _ingredientService.UpdateIngredientAsync(ingredientMap);
+            if (!updateIngredient.IsSuccess)
+                return (false, updateIngredient.ErrorMessage, -1);
+
+            return (true, string.Empty, updatedIngredient.Id);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, -1);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddIngredientAsync(MenuIngredientAddRequest ingredient)
     {
-        //Mapping Ingredients
-        var ingredientMap = _mapper.Map<Ingredient>(ingredient);
-        if (ingredientMap == null)
-            return (false, "Mapping failed, object is null");
+        try
+        {
+            //Mapping Ingredients
+            var ingredientMap = _mapper.Map<Ingredient>(ingredient);
+            if (ingredientMap == null)
+                return (false, "Mapping failed, object is null");
 
-        var categoryId = await _ingredientCategoryService.GetCategoryIdByName(ingredient.CategoryName);
-        if(!categoryId.IsSuccess)
-            return (false, categoryId.ErrorMessage);
+            var categoryId = await _ingredientCategoryService.GetCategoryIdByName(ingredient.CategoryName);
+            if (!categoryId.IsSuccess)
+                return (false, categoryId.ErrorMessage);
 
-        ingredientMap.CategoryId = categoryId.CategoryId;
-        
-        //Call the DAL update service
-        var addIngredient = await _ingredientService.CreateIngredientAsync(ingredientMap);
-        if (!addIngredient.IsSuccess)
-            return (false, addIngredient.ErrorMessage);
+            ingredientMap.CategoryId = categoryId.CategoryId;
 
-        return (true, string.Empty);
+            //Call the DAL update service
+            var addIngredient = await _ingredientService.CreateIngredientAsync(ingredientMap);
+            if (!addIngredient.IsSuccess)
+                return (false, addIngredient.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteIngredientAsync(int ingredientId)
     {
-        var deletedIngredient = await _ingredientService.DeleteIngredientAsync(ingredientId);
-        if (!deletedIngredient.IsSuccess)
-            return (false, deletedIngredient.ErrorMessage);
+        try
+        {
+            var deletedIngredient = await _ingredientService.DeleteIngredientAsync(ingredientId);
+            if (!deletedIngredient.IsSuccess)
+                return (false, deletedIngredient.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<MenuProductCategoryResponse> AllProductCategories)> GetAllProductCategoriesAsync()
     {
-        //Get Product Categories
-        var productCategories = await _productCategoryService.GetAllProductCategoriesAsync();
-        if (!productCategories.IsSuccess)
-            return (false, productCategories.ErrorMessage, new List<MenuProductCategoryResponse>());
+        try
+        {
+            //Get Product Categories
+            var productCategories = await _productCategoryService.GetAllProductCategoriesAsync();
+            if (!productCategories.IsSuccess)
+                return (false, productCategories.ErrorMessage, new List<MenuProductCategoryResponse>());
 
-        //Map Product Categories
-        var productCategoriesMap = _mapper.Map<List<MenuProductCategoryResponse>>(productCategories.ProductCategoryList);
-        if (productCategoriesMap == null)
-            return (false, "Mapping failed, object is null", new List<MenuProductCategoryResponse>());
+            //Map Product Categories
+            var productCategoriesMap =
+                _mapper.Map<List<MenuProductCategoryResponse>>(productCategories.ProductCategoryList);
+            if (productCategoriesMap == null)
+                return (false, "Mapping failed, object is null", new List<MenuProductCategoryResponse>());
 
-        return (true, string.Empty, productCategoriesMap);
+            return (true, string.Empty, productCategoriesMap);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<MenuProductCategoryResponse>());
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddProductCategoryAsync(MenuProductCategoryRequest productCategory)
     {
-        //Map Product Category
-        var productCategoriesMap = _mapper.Map<ProductCategory>(productCategory);
-        if (productCategoriesMap == null)
-            return (false, "Mapping failed, object is null");
-        
-        //Call the DAL update service
-        var addProductCategory = await _productCategoryService.CreateProductCategoryAsync(productCategoriesMap);
-        if (!addProductCategory.IsSuccess)
-            return (false, addProductCategory.ErrorMessage);
+        try
+        {
+            //Map Product Category
+            var productCategoriesMap = _mapper.Map<ProductCategory>(productCategory);
+            if (productCategoriesMap == null)
+                return (false, "Mapping failed, object is null");
 
-        return (true, string.Empty);
+            //Call the DAL update service
+            var addProductCategory = await _productCategoryService.CreateProductCategoryAsync(productCategoriesMap);
+            if (!addProductCategory.IsSuccess)
+                return (false, addProductCategory.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteProductCategoryAsync(int productCategoryId)
     {
-        var deletedProductCategory = await _productCategoryService.DeleteProductCategoryAsync(productCategoryId);
-        if (!deletedProductCategory.IsSuccess)
-            return (false, deletedProductCategory.ErrorMessage);
+        try
+        {
+            var deletedProductCategory = await _productCategoryService.DeleteProductCategoryAsync(productCategoryId);
+            if (!deletedProductCategory.IsSuccess)
+                return (false, deletedProductCategory.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<MenuIngredientCategoryResponse> AllIngredientCategories)> GetAllIngredientCategoriesAsync()
     {
-        //Get Ingredient Categories
-        var ingredientCategories = await _ingredientCategoryService.GetAllIngredientCategoriesAsync();
-        if (!ingredientCategories.IsSuccess)
-            return (false, ingredientCategories.ErrorMessage, new List<MenuIngredientCategoryResponse>());
-
-        //Map Product Categories
-        var ingredientCategoriesMap = _mapper.Map<List<MenuIngredientCategoryResponse>>(ingredientCategories.IngredientCategoryList);
-        if (ingredientCategoriesMap == null)
-            return (false, "Mapping failed, object is null", new List<MenuIngredientCategoryResponse>());
-
-        //Change required data
-        foreach (var categoryResponse in ingredientCategoriesMap)
+        try
         {
-            foreach (var category in ingredientCategories.IngredientCategoryList.Where(d => d.Id == categoryResponse.Id))
+            //Get Ingredient Categories
+            var ingredientCategories = await _ingredientCategoryService.GetAllIngredientCategoriesAsync();
+            if (!ingredientCategories.IsSuccess)
+                return (false, ingredientCategories.ErrorMessage, new List<MenuIngredientCategoryResponse>());
+
+            //Map Product Categories
+            var ingredientCategoriesMap =
+                _mapper.Map<List<MenuIngredientCategoryResponse>>(ingredientCategories.IngredientCategoryList);
+            if (ingredientCategoriesMap == null)
+                return (false, "Mapping failed, object is null", new List<MenuIngredientCategoryResponse>());
+
+            //Change required data
+            foreach (var categoryResponse in ingredientCategoriesMap)
             {
-                categoryResponse.IngredientCount = category.Ingredients.Count;
+                foreach (var category in ingredientCategories.IngredientCategoryList.Where(d =>
+                             d.Id == categoryResponse.Id))
+                {
+                    categoryResponse.IngredientCount = category.Ingredients.Count;
+                }
             }
+
+            return (true, string.Empty, ingredientCategoriesMap);
         }
-        
-        return (true, string.Empty, ingredientCategoriesMap);
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<MenuIngredientCategoryResponse>());
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddIngredientCategoryAsync(MenuIngredientCategoryRequest ingredientCategory)
     {
-        //Map Ingredient Category
-        var ingredientCategoriesMap = _mapper.Map<IngredientsCategory>(ingredientCategory);
-        if (ingredientCategoriesMap == null)
-            return (false, "Mapping failed, object is null");
-        
-        //Call the DAL update service
-        var addIngredientCategory = await _ingredientCategoryService.CreateIngredientCategoryAsync(ingredientCategoriesMap);
-        if (!addIngredientCategory.IsSuccess)
-            return (false, addIngredientCategory.ErrorMessage);
+        try
+        {
+            //Map Ingredient Category
+            var ingredientCategoriesMap = _mapper.Map<IngredientsCategory>(ingredientCategory);
+            if (ingredientCategoriesMap == null)
+                return (false, "Mapping failed, object is null");
 
-        return (true, string.Empty);
+            //Call the DAL update service
+            var addIngredientCategory =
+                await _ingredientCategoryService.CreateIngredientCategoryAsync(ingredientCategoriesMap);
+            if (!addIngredientCategory.IsSuccess)
+                return (false, addIngredientCategory.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteIngredientCategoryAsync(int ingredientCategoryId)
     {
-        var deletedIngredientCategory = await _ingredientCategoryService.DeleteIngredientCategoryAsync(ingredientCategoryId);
-        if (!deletedIngredientCategory.IsSuccess)
-            return (false, deletedIngredientCategory.ErrorMessage);
+        try
+        {
+            var deletedIngredientCategory =
+                await _ingredientCategoryService.DeleteIngredientCategoryAsync(ingredientCategoryId);
+            if (!deletedIngredientCategory.IsSuccess)
+                return (false, deletedIngredientCategory.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     private static (bool IsSuccess, string ErrorMessage, double Weight) GetWeight(List<ProductList> productList)
     {
-        double weight = 0;
-        foreach (var product in productList)
+        try
         {
-            weight += product.Count;
-        }
+            double weight = 0;
+            foreach (var product in productList)
+            {
+                weight += product.Count;
+            }
 
-        return (true, string.Empty, weight);
+            return (true, string.Empty, weight);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, -1);
+        }
     }
     
     private static (bool IsSuccess, string ErrorMessage, decimal PrimeCost) GetPrimeCost(List<ProductList> productList)
     {
-        decimal primeCost = 0;
-        foreach (var product in productList)
+        try
         {
-            primeCost += product.PrimeCost * (decimal)product.Count;
-        }
+            decimal primeCost = 0;
+            foreach (var product in productList)
+            {
+                primeCost += product.PrimeCost * (decimal)product.Count;
+            }
 
-        return (true, string.Empty, primeCost);
+            return (true, string.Empty, primeCost);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, 0);
+        }
     }
 }

@@ -37,13 +37,26 @@ public class SemiProductService : ISemiProductService
     {
         try
         {
-            var semiProduct = await _context.SemiProducts.FirstOrDefaultAsync(c => c.Id == updatedSemiProduct.Id);
+            var semiProduct = await _context.SemiProducts
+                .Include(S => S.ProductLists)
+                .FirstOrDefaultAsync(c => c.Id == updatedSemiProduct.Id);
             if (semiProduct == null) return (false, "SemiProduct does not exist", updatedSemiProduct);
 
             semiProduct.Name = updatedSemiProduct.Name;
             semiProduct.Output = updatedSemiProduct.Output;
             semiProduct.PrimeCost = updatedSemiProduct.PrimeCost;
             semiProduct.Prescription = updatedSemiProduct.Prescription;
+            
+            foreach (var productList in semiProduct.ProductLists)
+            {
+                _context.ProductLists.Remove(productList);
+            }
+            await _context.SaveChangesAsync();
+            foreach (var productList in updatedSemiProduct.ProductLists)
+            {
+                productList.SemiProductId = semiProduct.Id;
+                _context.ProductLists.Add(productList);
+            }
             var saved = await _context.SaveChangesAsync();
 
             return saved == 0

@@ -24,184 +24,261 @@ public class ManageService : IManageService
     }
     public async Task<(bool IsSuccess, string ErrorMessage, List<ManageClientResponse> AllClients)> GetAllClientsAsync()
     {
-        //Get all Clients
-        var clients = await _clientService.GetAllClientsAsync();
-        if (!clients.IsSuccess)
-            return (false, clients.ErrorMessage, new List<ManageClientResponse>());
-        
-        //Map Clients
-        var clientsMap = _mapper.Map<List<ManageClientResponse>>(clients.ClientList);
-        if (clientsMap == null)
-            return (false, "Mapping failed, object was null", new List<ManageClientResponse>());
-        
-        //Change required Data
-        foreach (var clientResponse in clientsMap)
+        try
         {
-            foreach (var client in clients.ClientList.Where(wr => wr.Id == clientResponse.Id))
+            //Get all Clients
+            var clients = await _clientService.GetAllClientsAsync();
+            if (!clients.IsSuccess)
+                return (false, clients.ErrorMessage, new List<ManageClientResponse>());
+
+            //Map Clients
+            var clientsMap = _mapper.Map<List<ManageClientResponse>>(clients.ClientList);
+            if (clientsMap == null)
+                return (false, "Mapping failed, object was null", new List<ManageClientResponse>());
+
+            //Change required Data
+            foreach (var clientResponse in clientsMap)
             {
-                decimal receiptsSum = 0;
-                foreach (var receipt in client.Receipts)
+                foreach (var client in clients.ClientList.Where(wr => wr.Id == clientResponse.Id))
                 {
-                    var sum = GetSum(receipt.ProductLists);
-                    if (!sum.IsSuccess)
-                        return (false, sum.ErrorMessage, new List<ManageClientResponse>());
+                    decimal receiptsSum = 0;
+                    foreach (var receipt in client.Receipts)
+                    {
+                        var sum = GetSum(receipt.ProductLists);
+                        if (!sum.IsSuccess)
+                            return (false, sum.ErrorMessage, new List<ManageClientResponse>());
 
-                    receiptsSum += sum.Sum;
+                        receiptsSum += sum.Sum;
+                    }
+
+                    clientResponse.ReceiptSum = receiptsSum;
                 }
-
-                clientResponse.ReceiptSum = receiptsSum;
             }
-        }
 
-        return (true, string.Empty, clientsMap);
+            return (true, string.Empty, clientsMap);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<ManageClientResponse>());
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateClientAsync(ManageClientRequest updatedClient)
     {
-        //Map Clients
-        var clientMap = _mapper.Map<Client>(updatedClient);
-        if (clientMap == null)
-            return (false, "Mapping failed, object was null", -1);
-        
-        //Call the DAL update service
-        var updateClient = await _clientService.UpdateClientAsync(clientMap);
-        if (!updateClient.IsSuccess)
-            return (false, updateClient.ErrorMessage, -1);
+        try
+        {
+            //Map Clients
+            var clientMap = _mapper.Map<Client>(updatedClient);
+            if (clientMap == null)
+                return (false, "Mapping failed, object was null", -1);
 
-        return (true, string.Empty, updatedClient.Id);
+            //Call the DAL update service
+            var updateClient = await _clientService.UpdateClientAsync(clientMap);
+            if (!updateClient.IsSuccess)
+                return (false, updateClient.ErrorMessage, -1);
+
+            return (true, string.Empty, updatedClient.Id);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, -1);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddClientAsync(ManageClientRequest client)
     {
-        //Map Clients
-        var clientMap = _mapper.Map<Client>(client);
-        if (clientMap == null)
-            return (false, "Mapping failed, object was null");
-        
-        //Call the DAL update service
-        var addClient = await _clientService.CreateClientAsync(clientMap);
-        if (!addClient.IsSuccess)
-            return (false, addClient.ErrorMessage);
+        try
+        {
+            //Map Clients
+            var clientMap = _mapper.Map<Client>(client);
+            if (clientMap == null)
+                return (false, "Mapping failed, object was null");
 
-        return (true, string.Empty);
+            //Call the DAL update service
+            var addClient = await _clientService.CreateClientAsync(clientMap);
+            if (!addClient.IsSuccess)
+                return (false, addClient.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteClientAsync(int clientId)
     {
-        var deletedClient = await _clientService.DeleteClientAsync(clientId);
-        if (!deletedClient.IsSuccess)
-            return (false, deletedClient.ErrorMessage);
+        try
+        {
+            var deletedClient = await _clientService.DeleteClientAsync(clientId);
+            if (!deletedClient.IsSuccess)
+                return (false, deletedClient.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<ManageUserResponse> AllUsers)> GetAllUsersAsync()
     {
-        //Get all Users
-        var users = await _userService.GetAllUsersAsync();
-        if (!users.IsSuccess)
-            return (false, users.ErrorMessage, new List<ManageUserResponse>());
-        
-        //Map Users
-        var usersMap = _mapper.Map<List<ManageUserResponse>>(users.UserList);
-        if (usersMap == null)
-            return (false, "Mapping failed, object was null", new List<ManageUserResponse>());
+        try
+        {
+            //Get all Users
+            var users = await _userService.GetAllUsersAsync();
+            if (!users.IsSuccess)
+                return (false, users.ErrorMessage, new List<ManageUserResponse>());
 
-        return (true, string.Empty, usersMap);
+            //Map Users
+            var usersMap = _mapper.Map<List<ManageUserResponse>>(users.UserList);
+            if (usersMap == null)
+                return (false, "Mapping failed, object was null", new List<ManageUserResponse>());
+
+            return (true, string.Empty, usersMap);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<ManageUserResponse>());
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateUserAsync(ManageUserRequest updatedUser)
     {
-        //Map User
-        var userMap = _mapper.Map<User>(updatedUser);
-        if (userMap == null)
-            return (false, "Mapping failed, object was null", -1);
-        
-        //Change required Data
-        var roleId = await _roleService.GetRoleIdByName(updatedUser.RoleName);
-        if (!roleId.IsSuccess)
-            return (false, roleId.ErrorMessage, -1);
-        
-        userMap.RoleId = roleId.RoleId;
-        //Call the DAL update service
-        var updateUser = await _userService.UpdateUserAsync(userMap);
-        if (!updateUser.IsSuccess)
-            return (false, updateUser.ErrorMessage, -1);
+        try
+        {
+            //Map User
+            var userMap = _mapper.Map<User>(updatedUser);
+            if (userMap == null)
+                return (false, "Mapping failed, object was null", -1);
 
-        return (true, string.Empty, updatedUser.Id);
+            //Change required Data
+            var roleId = await _roleService.GetRoleIdByName(updatedUser.RoleName);
+            if (!roleId.IsSuccess)
+                return (false, roleId.ErrorMessage, -1);
+
+            userMap.RoleId = roleId.RoleId;
+            //Call the DAL update service
+            var updateUser = await _userService.UpdateUserAsync(userMap);
+            if (!updateUser.IsSuccess)
+                return (false, updateUser.ErrorMessage, -1);
+
+            return (true, string.Empty, updatedUser.Id);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, -1);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddUserAsync(ManageUserRequest user)
     {
-        //Map User
-        var userMap = _mapper.Map<User>(user);
-        if (userMap == null)
-            return (false, "Mapping failed, object was null");
-        
-        //Change required Data
-        var roleId = await _roleService.GetRoleIdByName(user.RoleName);
-        if (!roleId.IsSuccess)
-            return (false, roleId.ErrorMessage);
-        
-        
-        userMap.RoleId = roleId.RoleId;
-        if(user.Password != null)
-            userMap.HashedPassword = HashPassword(user.Password);
-        
-        //Call the DAL update service
-        var addUser = await _userService.CreateUserAsync(userMap);
-        if (!addUser.IsSuccess)
-            return (false, addUser.ErrorMessage);
+        try
+        {
+            //Map User
+            var userMap = _mapper.Map<User>(user);
+            if (userMap == null)
+                return (false, "Mapping failed, object was null");
 
-        return (true, string.Empty);
+            //Change required Data
+            var roleId = await _roleService.GetRoleIdByName(user.RoleName);
+            if (!roleId.IsSuccess)
+                return (false, roleId.ErrorMessage);
+
+
+            userMap.RoleId = roleId.RoleId;
+            if (user.Password != null)
+                userMap.HashedPassword = HashPassword(user.Password);
+
+            //Call the DAL update service
+            var addUser = await _userService.CreateUserAsync(userMap);
+            if (!addUser.IsSuccess)
+                return (false, addUser.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteUserAsync(int userId)
     {
-        var deletedUser = await _userService.DeleteUserAsync(userId);
-        if (!deletedUser.IsSuccess)
-            return (false, deletedUser.ErrorMessage);
+        try
+        {
+            var deletedUser = await _userService.DeleteUserAsync(userId);
+            if (!deletedUser.IsSuccess)
+                return (false, deletedUser.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage, List<ManageRoleResponse> AllRoles)> GetAllRolesAsync()
     {
-        //Get all Roles
-        var roles = await _roleService.GetAllRolesAsync();
-        if (!roles.IsSuccess)
-            return (false, roles.ErrorMessage, new List<ManageRoleResponse>());
-        
-        //Map Roles
-        var rolesMap = _mapper.Map<List<ManageRoleResponse>>(roles.RoleList);
-        if (rolesMap == null)
-            return (false, "Mapping failed, object was null", new List<ManageRoleResponse>());
+        try
+        {
+            //Get all Roles
+            var roles = await _roleService.GetAllRolesAsync();
+            if (!roles.IsSuccess)
+                return (false, roles.ErrorMessage, new List<ManageRoleResponse>());
 
-        return (true, string.Empty, rolesMap);
+            //Map Roles
+            var rolesMap = _mapper.Map<List<ManageRoleResponse>>(roles.RoleList);
+            if (rolesMap == null)
+                return (false, "Mapping failed, object was null", new List<ManageRoleResponse>());
+
+            return (true, string.Empty, rolesMap);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new List<ManageRoleResponse>());
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> AddRoleAsync(ManageRoleRequest role)
     {
-        //Map Role
-        var roleMap = _mapper.Map<Role>(role);
-        if (roleMap == null)
-            return (false, "Mapping failed, object was null");
-        
-        //Call the DAL update service
-        var addRole = await _roleService.CreateRoleAsync(roleMap);
-        if (!addRole.IsSuccess)
-            return (false, addRole.ErrorMessage);
+        try
+        {
+            //Map Role
+            var roleMap = _mapper.Map<Role>(role);
+            if (roleMap == null)
+                return (false, "Mapping failed, object was null");
 
-        return (true, string.Empty);
+            //Call the DAL update service
+            var addRole = await _roleService.CreateRoleAsync(roleMap);
+            if (!addRole.IsSuccess)
+                return (false, addRole.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
 
     public async Task<(bool IsSuccess, string ErrorMessage)> DeleteRoleAsync(int roleId)
     {
-        var deletedRole = await _roleService.DeleteRoleAsync(roleId);
-        if (!deletedRole.IsSuccess)
-            return (false, deletedRole.ErrorMessage);
+        try
+        {
+            var deletedRole = await _roleService.DeleteRoleAsync(roleId);
+            if (!deletedRole.IsSuccess)
+                return (false, deletedRole.ErrorMessage);
 
-        return (true, string.Empty);
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
     }
     
     private static (bool IsSuccess, string ErrorMessage, decimal Sum) GetSum(List<ProductList> productLists)

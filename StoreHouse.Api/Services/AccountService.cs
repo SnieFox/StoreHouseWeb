@@ -21,23 +21,30 @@ public class AccountService : IAccountService
     }
     public async Task<(bool IsSuccess, string ErrorMessage, ManageUserResponse User)> LoginUser(LoginDataRequest loginData)
     {
-        string hashedPassword = HashPassword(loginData.Password);
-        
-        var users = await _userService.GetAllUsersAsync();
-        if (!users.IsSuccess)
-            return (false, users.ErrorMessage, new ManageUserResponse());
-        
-        var checkedUser = users.UserList
-            .FirstOrDefault(u => u.HashedPassword == hashedPassword && u.Login == loginData.Login);
-        if (checkedUser == null)
-            return (false, "Incorrect Login or Password", new ManageUserResponse());
-        
-        //Map Users
-        var userMap = _mapper.Map<ManageUserResponse>(checkedUser);
-        if (userMap == null)
-            return (false, "Mapping failed, object was null", new ManageUserResponse());
+        try
+        {
+            string hashedPassword = HashPassword(loginData.Password);
 
-        return (true, string.Empty, userMap);
+            var users = await _userService.GetAllUsersAsync();
+            if (!users.IsSuccess)
+                return (false, users.ErrorMessage, new ManageUserResponse());
+
+            var checkedUser = users.UserList
+                .FirstOrDefault(u => u.HashedPassword == hashedPassword && u.Login == loginData.Login);
+            if (checkedUser == null)
+                return (false, "Incorrect Login or Password", new ManageUserResponse());
+
+            //Map Users
+            var userMap = _mapper.Map<ManageUserResponse>(checkedUser);
+            if (userMap == null)
+                return (false, "Mapping failed, object was null", new ManageUserResponse());
+
+            return (true, string.Empty, userMap);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message, new ManageUserResponse());
+        }
     }
     
     private static string HashPassword(string password)

@@ -26,6 +26,9 @@ public static class SupportingMethodExtension
                 var semiProduct = await dbService.SemiProducts
                                 .Include(c => c.ProductLists)
                                 .FirstOrDefaultAsync(c => c.Name == prod.Name);
+                var dish = await dbService.Dishes
+                    .Include(d => d.ProductLists)
+                    .FirstOrDefaultAsync(c => c.Name == prod.Name);
 
                 if (ingredient != null)
                 {
@@ -37,8 +40,39 @@ public static class SupportingMethodExtension
                 }
                 else if (semiProduct != null)
                 {
-                    var result = await UpdateRemainsAsync(dbService, semiProduct.ProductLists, increase);
+                    var prodListToChange = new List<ProductList>();
+                    foreach (var pr in semiProduct.ProductLists)
+                    {
+                        prodListToChange.Add(new ProductList
+                        {
+                            Id = pr.Id,
+                            Name = pr.Name,
+                            Price = pr.Price,
+                            PrimeCost = pr.PrimeCost,
+                            Comment = pr.Comment,
+                            Count = pr.Count * prod.Count
+                        });
+                    }
+                    var result = await UpdateRemainsAsync(dbService, prodListToChange, increase);
                     errors += $"SemiProduct id {semiProduct.Id}: {result.ErrorMessage}; ";
+                }
+                else if (dish != null)
+                {
+                    var prodListToChange = new List<ProductList>();
+                    foreach (var pr in dish.ProductLists)
+                    {
+                        prodListToChange.Add(new ProductList
+                        {
+                            Id = pr.Id,
+                            Name = pr.Name,
+                            Price = pr.Price,
+                            PrimeCost = pr.PrimeCost,
+                            Comment = pr.Comment,
+                            Count = pr.Count * prod.Count
+                        });
+                    }
+                    var result = await UpdateRemainsAsync(dbService, prodListToChange, increase);
+                    errors += $"Dish id {dish.Id}: {result.ErrorMessage}; ";
                 }
                 
                 var saved = await dbService.SaveChangesAsync();

@@ -57,7 +57,10 @@ public class WriteOffCauseService : IWriteOffCauseService
     {
         try
         {
-            var writeOffCauses = await _context.WriteOffCauses.ToListAsync();
+            var writeOffCauses = await _context.WriteOffCauses
+                .Include(d => d.WriteOffs)
+                .ThenInclude(p => p.ProductLists)
+                .ToListAsync();
 
             return (true, string.Empty, writeOffCauses);
         }
