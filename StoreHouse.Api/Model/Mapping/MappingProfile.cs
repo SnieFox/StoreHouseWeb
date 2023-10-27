@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using AutoMapper;
 using Castle.Components.DictionaryAdapter.Xml;
+using StoreHouse.Api.Model.DTO.AcoountDTO;
 using StoreHouse.Api.Model.DTO.CheckoutDTO;
 using StoreHouse.Api.Model.DTO.DishListDTO;
 using StoreHouse.Api.Model.DTO.ManageDTO;
@@ -389,7 +390,7 @@ public class MappingProfile : Profile
 
         #endregion
 
-        #region MyRegion
+        #region Mapping Data for Checkout Service
 
         this.CreateMap<ProductCategory, CheckoutProductCategoryResponse>()
             .ForMember(d => d.Id,
@@ -502,5 +503,21 @@ public class MappingProfile : Profile
                 op => op.MapFrom(srs => srs.Price));
 
         #endregion
+
+        this.CreateMap<OrganizationRequest, Organization>()
+            .ForMember(d => d.Name,
+                op => op.MapFrom(srs => srs.Name));
+        
+        this.CreateMap<OwnerRequest, User>()
+            .ForMember(d => d.FullName,
+                op => op.MapFrom(srs => srs.Name))
+            .ForMember(d => d.Login,
+                op => op.MapFrom(srs => srs.Login))
+            .ForMember(d => d.Email,
+                op => op.MapFrom(srs => srs.Email))
+            .ForMember(d => d.MobilePhone,
+                op => op.MapFrom(srs => srs.MobilePhone))
+            .ForMember(d => d.PinCode,
+                op => op.MapFrom(srs => srs.PinCode));
     }
 }

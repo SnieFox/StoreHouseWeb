@@ -11,6 +11,7 @@ public class StoreHouseContext : DbContext
     }
 
     public virtual DbSet<Client> Clients { get; set; }
+    public virtual DbSet<Organization> Organizations { get; set; }
     public virtual DbSet<Dish> Dishes { get; set; }
     public virtual DbSet<Ingredient> Ingredients { get; set; }
     public virtual DbSet<IngredientsCategory> IngredientsCategories { get; set; }
@@ -103,6 +104,11 @@ public class StoreHouseContext : DbContext
                 .WithMany(u => u.Users)
                 .HasForeignKey(r => r.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+            //User-Organization
+            entity.HasOne(r => r.Organization)
+                .WithMany(u => u.Users)
+                .HasForeignKey(r => r.OrganizationId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.Property(e => e.Email);
             entity.Property(e => e.FullName);
@@ -167,7 +173,7 @@ public class StoreHouseContext : DbContext
             entity.HasOne(s => s.User)
                 .WithMany(p => p.Supplies)
                 .HasForeignKey(s => s.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.SetNull);
 
             //Supply-Supplier
             entity.HasOne(s => s.Supplier)

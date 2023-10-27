@@ -11,9 +11,9 @@ public interface IManageService
     Task<(bool IsSuccess, string ErrorMessage)> DeleteClientAsync(int clientId);
     
     //CRUD for Users
-    Task<(bool IsSuccess, string ErrorMessage, List<ManageUserResponse> AllUsers)> GetAllUsersAsync();
+    Task<(bool IsSuccess, string ErrorMessage, List<ManageUserResponse> AllUsers)> GetAllUsersAsync(string userLogin);
     Task<(bool IsSuccess, string ErrorMessage, int UpdatedId)> UpdateUserAsync(ManageUserRequest updatedUser);
-    Task<(bool IsSuccess, string ErrorMessage)> AddUserAsync(ManageUserRequest user);
+    Task<(bool IsSuccess, string ErrorMessage)> AddUserAsync(ManageUserRequest user, string userLogin);
     Task<(bool IsSuccess, string ErrorMessage)> DeleteUserAsync(int userId);
     
     //CRUD for Roles

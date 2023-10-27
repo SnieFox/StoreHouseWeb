@@ -8,7 +8,7 @@ namespace StoreHouse.Api.Controllers;
 
 [ApiController]
 [Route($"manage")]
-[Authorize]
+//[Authorize]
 public class ManageController : Controller
 {
     private readonly IManageService _manageService;
@@ -29,7 +29,8 @@ public class ManageController : Controller
     [Route($"users")]
     public async Task<IActionResult> GetAllUsers()
     {
-        var users = await _manageService.GetAllUsersAsync();
+        var userLogin = HttpContext.User.Identity.Name;
+        var users = await _manageService.GetAllUsersAsync(userLogin);
         if (!users.IsSuccess)
             return BadRequest(users.ErrorMessage);
         
@@ -120,7 +121,8 @@ public class ManageController : Controller
             return BadRequest(errorMessages);
         }
 
-        var addUserResult = await _manageService.AddUserAsync(user);
+        var userLogin = HttpContext.User.Identity.Name;
+        var addUserResult = await _manageService.AddUserAsync(user, userLogin);
         if (!addUserResult.IsSuccess)
             return BadRequest(addUserResult.ErrorMessage);
 

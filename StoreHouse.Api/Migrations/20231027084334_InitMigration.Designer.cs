@@ -12,8 +12,8 @@ using StoreHouse.Database.StoreHouseDbContext;
 namespace StoreHouse.Api.Migrations
 {
     [DbContext(typeof(StoreHouseContext))]
-    [Migration("20231024131459_RevokeJwtTokenTable")]
-    partial class RevokeJwtTokenTable
+    [Migration("20231027084334_InitMigration")]
+    partial class InitMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,6 +148,23 @@ namespace StoreHouse.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("IngredientsCategories");
+                });
+
+            modelBuilder.Entity("StoreHouse.Database.Entities.Organization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations");
                 });
 
             modelBuilder.Entity("StoreHouse.Database.Entities.Product", b =>
@@ -300,23 +317,6 @@ namespace StoreHouse.Api.Migrations
                     b.ToTable("Receipt", (string)null);
                 });
 
-            modelBuilder.Entity("StoreHouse.Database.Entities.RevokedJwtToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RevokedJwtToken", (string)null);
-                });
-
             modelBuilder.Entity("StoreHouse.Database.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -454,6 +454,9 @@ namespace StoreHouse.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("PinCode")
                         .IsRequired()
                         .HasColumnType("text");
@@ -462,6 +465,8 @@ namespace StoreHouse.Api.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("RoleId");
 
@@ -613,7 +618,8 @@ namespace StoreHouse.Api.Migrations
 
                     b.HasOne("StoreHouse.Database.Entities.User", "User")
                         .WithMany("Supplies")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Supplier");
 
@@ -622,16 +628,24 @@ namespace StoreHouse.Api.Migrations
 
             modelBuilder.Entity("StoreHouse.Database.Entities.User", b =>
                 {
+                    b.HasOne("StoreHouse.Database.Entities.Organization", "Organization")
+                        .WithMany("Users")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("StoreHouse.Database.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId");
+
+                    b.Navigation("Organization");
 
                     b.Navigation("Role");
                 });
 
             modelBuilder.Entity("StoreHouse.Database.Entities.WriteOff", b =>
                 {
-                    b.HasOne("StoreHouse.Database.Entities.WriteOffCause", "Cause")
+                    b.HasOne("StoreHouse.Database.Entities.WriteOffCause", "WriteOffCause")
                         .WithMany("WriteOffs")
                         .HasForeignKey("CauseId");
 
@@ -639,9 +653,9 @@ namespace StoreHouse.Api.Migrations
                         .WithMany("WriteOffs")
                         .HasForeignKey("UserId");
 
-                    b.Navigation("Cause");
-
                     b.Navigation("User");
+
+                    b.Navigation("WriteOffCause");
                 });
 
             modelBuilder.Entity("StoreHouse.Database.Entities.Client", b =>
@@ -657,6 +671,11 @@ namespace StoreHouse.Api.Migrations
             modelBuilder.Entity("StoreHouse.Database.Entities.IngredientsCategory", b =>
                 {
                     b.Navigation("Ingredients");
+                });
+
+            modelBuilder.Entity("StoreHouse.Database.Entities.Organization", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("StoreHouse.Database.Entities.ProductCategory", b =>

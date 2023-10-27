@@ -11,12 +11,14 @@ namespace StoreHouse.Api.Services;
 public class ManageService : IManageService
 {
     private readonly IClientService _clientService;
+    private readonly IOrganizationService _organizationService;
     private readonly IUserService _userService;
     private readonly IRoleService _roleService;
     private readonly IMapper _mapper;
 
-    public ManageService(IClientService clientService, IUserService userService, IRoleService roleService, IMapper mapper)
+    public ManageService(IOrganizationService organizationService, IClientService clientService, IUserService userService, IRoleService roleService, IMapper mapper)
     {
+        _organizationService = organizationService;
         _roleService = roleService;
         _userService = userService;
         _clientService = clientService;
@@ -123,7 +125,7 @@ public class ManageService : IManageService
         }
     }
 
-    public async Task<(bool IsSuccess, string ErrorMessage, List<ManageUserResponse> AllUsers)> GetAllUsersAsync()
+    public async Task<(bool IsSuccess, string ErrorMessage, List<ManageUserResponse> AllUsers)> GetAllUsersAsync(string userLogin)
     {
         try
         {
@@ -131,6 +133,16 @@ public class ManageService : IManageService
             var users = await _userService.GetAllUsersAsync();
             if (!users.IsSuccess)
                 return (false, users.ErrorMessage, new List<ManageUserResponse>());
+            
+            var organizationId = await _organizationService.GetOrganizationIdByUserLoginAsync(userLogin);
+            if (!organizationId.IsSuccess)
+                return (false, users.ErrorMessage, new List<ManageUserResponse>());
+            
+            var systemUsers = users.UserList.Where(user => user.Role.Name == "System" || user.OrganizationId != organizationId.OrganizationId).ToList();
+            foreach (var user in systemUsers)
+            {
+                users.UserList.Remove(user);
+            }
 
             //Map Users
             var usersMap = _mapper.Map<List<ManageUserResponse>>(users.UserList);
@@ -173,10 +185,12 @@ public class ManageService : IManageService
         }
     }
 
-    public async Task<(bool IsSuccess, string ErrorMessage)> AddUserAsync(ManageUserRequest user)
+    public async Task<(bool IsSuccess, string ErrorMessage)> AddUserAsync(ManageUserRequest user, string userLogin)
     {
         try
         {
+            if (user.RoleName == "Admin" && (user.Password == "" || user.Login == ""))
+                return (false, "Admin must have Login and Password");
             //Map User
             var userMap = _mapper.Map<User>(user);
             if (userMap == null)
@@ -187,8 +201,12 @@ public class ManageService : IManageService
             if (!roleId.IsSuccess)
                 return (false, roleId.ErrorMessage);
 
+            var organizationId = await _organizationService.GetOrganizationIdByUserLoginAsync(userLogin);
+            if (!organizationId.IsSuccess)
+                return (false, roleId.ErrorMessage);
 
             userMap.RoleId = roleId.RoleId;
+            userMap.OrganizationId = organizationId.OrganizationId;
             if (user.Password != null)
                 userMap.HashedPassword = HashPassword(user.Password);
 
@@ -229,6 +247,11 @@ public class ManageService : IManageService
             var roles = await _roleService.GetAllRolesAsync();
             if (!roles.IsSuccess)
                 return (false, roles.ErrorMessage, new List<ManageRoleResponse>());
+            var rolesToDelete = roles.RoleList.Where(role => role.Name is "System" or "Owner").ToList();
+            foreach (var role in rolesToDelete)
+            {
+                roles.RoleList.Remove(role);
+            }
 
             //Map Roles
             var rolesMap = _mapper.Map<List<ManageRoleResponse>>(roles.RoleList);
@@ -247,6 +270,8 @@ public class ManageService : IManageService
     {
         try
         {
+            if (role.Name == "System")
+                return (false, "System roles cannot be added");
             //Map Role
             var roleMap = _mapper.Map<Role>(role);
             if (roleMap == null)

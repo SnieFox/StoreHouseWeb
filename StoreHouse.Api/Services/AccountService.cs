@@ -13,9 +13,13 @@ public class AccountService : IAccountService
 {
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
+    private readonly IOrganizationService _organizationService;
+    private readonly IRoleService _roleService;
 
-    public AccountService(IUserService userService, IMapper mapper)
+    public AccountService(IRoleService roleService, IOrganizationService organizationService, IUserService userService, IMapper mapper)
     {
+        _roleService = roleService;
+        _organizationService = organizationService;
         _mapper = mapper;
         _userService = userService;
     }
@@ -44,6 +48,79 @@ public class AccountService : IAccountService
         catch (Exception e)
         {
             return (false, e.Message, new ManageUserResponse());
+        }
+    }
+    
+    public async Task<(bool IsSuccess, string ErrorMessage)> AddOrganizationAsync(OrganizationRequest organization)
+    {
+        try
+        {
+            var organizationMap = _mapper.Map<Organization>(organization);
+            if (organizationMap == null)
+                return (false, "Mapping failed, object is null");
+            
+            var addOrganization =
+                await _organizationService.CreateOrganizationAsync(organizationMap);
+            if (!addOrganization.IsSuccess)
+                return (false, addOrganization.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
+    
+    public async Task<(bool IsSuccess, string ErrorMessage)> AddOwnerAsync(OwnerRequest user)
+    {
+        try
+        {
+            //Map User
+            var userMap = _mapper.Map<User>(user);
+            if (userMap == null)
+                return (false, "Mapping failed, object was null");
+
+            //Change required Data
+            var roleId = await _roleService.GetRoleIdByName(user.RoleName);
+            if (!roleId.IsSuccess)
+                return (false, roleId.ErrorMessage);
+
+            var organizationId = await _organizationService.GetOrganizationIdByNameAsync(user.OrganizationName);
+            if (!organizationId.IsSuccess)
+                return (false, roleId.ErrorMessage);
+            
+            userMap.RoleId = roleId.RoleId;
+            userMap.OrganizationId = organizationId.OrganizationId;
+            if (user.Password != null)
+                userMap.HashedPassword = HashPassword(user.Password);
+
+            //Call the DAL update service
+            var addUser = await _userService.CreateUserAsync(userMap);
+            if (!addUser.IsSuccess)
+                return (false, addUser.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
+        }
+    }
+    
+    public async Task<(bool IsSuccess, string ErrorMessage)> DeleteOrganizationAsync(int organizationId)
+    {
+        try
+        {
+            var deletedOrganization = await _organizationService.DeleteOrganizationAsync(organizationId);
+            if (!deletedOrganization.IsSuccess)
+                return (false, deletedOrganization.ErrorMessage);
+
+            return (true, string.Empty);
+        }
+        catch (Exception e)
+        {
+            return (false, e.Message);
         }
     }
     

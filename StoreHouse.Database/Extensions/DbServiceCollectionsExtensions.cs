@@ -38,6 +38,7 @@ public static class DbServiceCollectionsExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWriteOffCauseService, WriteOffCauseService>();
         services.AddScoped<IWriteOffService, WriteOffService>();
+        services.AddScoped<IOrganizationService, OrganizationService>();
 
         return services;
     }

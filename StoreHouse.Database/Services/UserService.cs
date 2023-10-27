@@ -26,7 +26,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return (false, e.Message, user);
+            return (false, $"An error occurred: {e.Message}. Inner Exception: {e.InnerException?.Message}", user);
         }
     }
 
@@ -62,7 +62,7 @@ public class UserService : IUserService
         try
         {
             var user = await _context.Users
-                            .Include(c => c.Receipts)
+                            //.Include(c => c.Receipts)
                             .FirstOrDefaultAsync(c => c.Id == userId);
             if (user == null) return (false, "User does not exist");
 
@@ -73,7 +73,7 @@ public class UserService : IUserService
         }
         catch (Exception e)
         {
-            return (false, e.Message);
+            return (false, $"An error occurred: {e.Message}. Inner Exception: {e.InnerException?.Message}");
         }
     }
     

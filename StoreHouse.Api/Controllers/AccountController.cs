@@ -50,6 +50,42 @@ public class AccountController : Controller
         return Ok(new {loginUser.User, token});
     }
     
+    [HttpPost]
+    [Route("organization/create")]
+    [Authorize(Roles = "System")]
+    public async Task<IActionResult> AddOrganization(OrganizationRequest organization)
+    {
+        var addOrganization = await _accountService.AddOrganizationAsync(organization);
+        if (!addOrganization.IsSuccess)
+            return BadRequest(addOrganization.ErrorMessage);
+        
+        return Ok();
+    }
+    
+    [HttpPost]
+    [Route("owner/create")]
+    [Authorize(Roles = "System")]
+    public async Task<IActionResult> AddOwner(OwnerRequest owner)
+    {
+        var addOwner = await _accountService.AddOwnerAsync(owner);
+        if (!addOwner.IsSuccess)
+            return BadRequest(addOwner.ErrorMessage);
+        
+        return Ok();
+    }
+    
+    [HttpDelete]
+    [Route("organization/delete")]
+    [Authorize(Roles = "System")]
+    public async Task<IActionResult> DeleteOrganization(int organizationId)
+    {
+        var deleteOrganization = await _accountService.DeleteOrganizationAsync(organizationId);
+        if (!deleteOrganization.IsSuccess)
+            return BadRequest(deleteOrganization.ErrorMessage);
+        
+        return Ok();
+    }
+    
     [Authorize]
     [HttpGet]
     [Route("logout")]
