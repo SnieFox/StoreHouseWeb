@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StoreHouse.Api.Model.DTO.MenuDTO;
-using StoreHouse.Api.Model.DTO.StorageDTO;
 using StoreHouse.Api.Services.Interfaces;
 
 namespace StoreHouse.Api.Controllers;

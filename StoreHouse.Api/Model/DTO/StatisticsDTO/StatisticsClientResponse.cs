@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace StoreHouse.Api.Model.DTO.StatisticsDTO;
+﻿namespace StoreHouse.Api.Model.DTO.StatisticsDTO;
 
 public class StatisticsClientResponse
 {

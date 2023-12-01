@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using StoreHouse.Database.Entities;
 using StoreHouse.Database.StoreHouseDbContext;
 

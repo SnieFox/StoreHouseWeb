@@ -1,7 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using AutoMapper;
-using Castle.Components.DictionaryAdapter.Xml;
-using StoreHouse.Api.Model.DTO.AcoountDTO;
+﻿using AutoMapper;
+using StoreHouse.Api.Model.DTO.AcсountDTO;
 using StoreHouse.Api.Model.DTO.CheckoutDTO;
 using StoreHouse.Api.Model.DTO.DishListDTO;
 using StoreHouse.Api.Model.DTO.ManageDTO;

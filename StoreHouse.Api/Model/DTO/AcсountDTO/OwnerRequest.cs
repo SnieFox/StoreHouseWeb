@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace StoreHouse.Api.Model.DTO.AcoountDTO;
+namespace StoreHouse.Api.Model.DTO.AcсountDTO;
 
 public class OwnerRequest
 {

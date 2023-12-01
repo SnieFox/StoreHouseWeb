@@ -1,4 +1,4 @@
-﻿using StoreHouse.Api.Model.DTO.AcoountDTO;
+﻿using StoreHouse.Api.Model.DTO.AcсountDTO;
 using StoreHouse.Api.Model.DTO.ManageDTO;
 using StoreHouse.Database.Entities;
 

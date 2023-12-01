@@ -1,5 +1,4 @@
 ﻿using StoreHouse.Api.Model.DTO.ProductListDTO;
-using StoreHouse.Database.Entities;
 
 namespace StoreHouse.Api.Model.DTO.CheckoutDTO;
 

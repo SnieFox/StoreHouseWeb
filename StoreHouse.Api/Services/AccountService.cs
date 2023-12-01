@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using AutoMapper;
-using StoreHouse.Api.Model.DTO.AcoountDTO;
+using StoreHouse.Api.Model.DTO.AcсountDTO;
 using StoreHouse.Api.Model.DTO.ManageDTO;
 using StoreHouse.Api.Services.Interfaces;
 using StoreHouse.Database.Entities;

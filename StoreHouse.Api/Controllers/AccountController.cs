@@ -1,14 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using StoreHouse.Api.Model.DTO.AcoountDTO;
-using StoreHouse.Api.Model.DTO.ManageDTO;
+using StoreHouse.Api.Model.DTO.AcсountDTO;
 using StoreHouse.Api.Services.Interfaces;
 
 namespace StoreHouse.Api.Controllers;
@@ -19,11 +15,13 @@ public class AccountController : Controller
 {
     private readonly IAccountService _accountService;
     private readonly ITokenLifetimeManager _tokenLifetimeManager;
+    private readonly IConfiguration _configuration;
 
-    public AccountController(ITokenLifetimeManager tokenLifetimeManager, IAccountService accountService)
+    public AccountController(ITokenLifetimeManager tokenLifetimeManager, IAccountService accountService, IConfiguration configuration)
     {
         _accountService = accountService;
         _tokenLifetimeManager = tokenLifetimeManager;
+        _configuration = configuration;
     }
     
     [HttpPost]
@@ -44,7 +42,7 @@ public class AccountController : Controller
             audience: "MyClient",
             claims: claims,
             expires: DateTime.UtcNow.Add(TimeSpan.FromHours(1)),
-            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes("somesuperstrongkey")), SecurityAlgorithms.HmacSha256));
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("JwtSettings:Key").Value)), SecurityAlgorithms.HmacSha256));
 
         string token = new JwtSecurityTokenHandler().WriteToken(jwt);
         return Ok(new {loginUser.User, token});

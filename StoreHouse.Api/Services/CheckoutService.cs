@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore.Metadata;
 using StoreHouse.Api.Model.DTO.CheckoutDTO;
 using StoreHouse.Api.Model.DTO.DishListDTO;
 using StoreHouse.Api.Model.DTO.ProductListDTO;

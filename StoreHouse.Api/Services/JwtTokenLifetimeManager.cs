@@ -1,7 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StoreHouse.Api.Services.Interfaces;
+using IConfiguration = Castle.Core.Configuration.IConfiguration;
 
 namespace StoreHouse.Api.Services;
 
